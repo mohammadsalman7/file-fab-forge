@@ -165,92 +165,159 @@ export const removeBackgroundRembg = async (imageElement: HTMLImageElement): Pro
   }
 };
 
-// Improved AI-based background removal with proper mask logic
+// Simple but effective background removal using rembg-style algorithm
 export const removeBackground = async (imageElement: HTMLImageElement): Promise<Blob> => {
   try {
-    console.log('Starting AI background removal...');
-    
-    // Try AI segmentation first
-    const segmenter = await pipeline('image-segmentation', 'Xenova/segformer-b0-finetuned-ade-512-512', {
-      device: 'webgpu',
-    });
+    console.log('Starting rembg-style background removal...');
     
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('Could not get canvas context');
     
     resizeImageIfNeeded(canvas, ctx, imageElement);
-    const imageData = canvas.toDataURL('image/jpeg', 0.8);
     
-    console.log('Processing with AI segmentation...');
-    const result = await segmenter(imageData);
-    console.log('AI segmentation result:', result);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    const width = canvas.width;
+    const height = canvas.height;
     
-    if (!result || !Array.isArray(result) || result.length === 0) {
-      console.log('AI segmentation failed, using rembg-style approach...');
-      return removeBackgroundRembg(imageElement);
-    }
+    // Simple but effective foreground detection
+    const mask = new Uint8Array(width * height);
     
-    // Create output canvas
-    const outputCanvas = document.createElement('canvas');
-    outputCanvas.width = canvas.width;
-    outputCanvas.height = canvas.height;
-    const outputCtx = outputCanvas.getContext('2d');
-    if (!outputCtx) throw new Error('Could not get output context');
+    // Step 1: Find image center and create distance map
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
     
-    outputCtx.drawImage(canvas, 0, 0);
-    const outputImageData = outputCtx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = outputImageData.data;
-    
-    // Define what to keep vs remove (FIXED LOGIC)
-    const subjectLabels = ['person', 'face', 'animal', 'dog', 'cat', 'bicycle', 'car', 'motorbike', 'bottle', 'chair', 'sofa', 'plant', 'potted plant', 'food', 'book', 'laptop', 'mouse', 'keyboard', 'cell phone', 'signboard', 'trade name', 'logo', 'text', 'sign', 'banner', 'advertisement'];
-    const backgroundLabels = ['sky', 'cloud', 'wall', 'building', 'floor', 'ceiling', 'road', 'grass', 'sidewalk', 'earth', 'mountain', 'sea', 'water', 'river', 'tree', 'field'];
-    
-    // Create final mask - start with keep everything
-    const finalMask = new Uint8Array(canvas.width * canvas.height);
-    finalMask.fill(255); // Default: keep everything
-    
-    // Process each segment
-    for (const segment of result) {
-      if (segment.label && segment.mask && segment.mask.data) {
-        const label = segment.label.toLowerCase();
-        console.log(`Processing segment: ${label}`);
+    // Step 2: Analyze color variance and edge strength
+    for (let y = 1; y < height - 1; y++) {
+      for (let x = 1; x < width - 1; x++) {
+        const idx = y * width + x;
+        const pixelIdx = idx * 4;
         
-        // Check if this is a subject element that should be kept
-        const isSubject = subjectLabels.some(subjectLabel => 
-          label.includes(subjectLabel) || subjectLabel.includes(label)
-        );
+        const r = data[pixelIdx];
+        const g = data[pixelIdx + 1];
+        const b = data[pixelIdx + 2];
         
-        // Check if this is a background element that should be removed
-        const isBackground = backgroundLabels.some(bgLabel => 
-          label.includes(bgLabel) || bgLabel.includes(label)
-        );
+        // Distance from center (subjects usually closer to center)
+        const distance = Math.sqrt((x - centerX) ** 2 + (y - centerY) ** 2);
+        const centerScore = 1 - (distance / maxDistance);
         
-        if (isBackground && !isSubject) {
-          // Remove this segment (set to transparent)
-          for (let i = 0; i < segment.mask.data.length; i++) {
-            const maskValue = segment.mask.data[i];
-            if (maskValue > 100) { // High confidence for this segment
-              finalMask[i] = 0; // Remove (transparent)
-            }
+        // Edge detection (subjects have more defined edges)
+        let edgeStrength = 0;
+        const neighbors = [
+          [-1, -1], [-1, 0], [-1, 1],
+          [0, -1],           [0, 1],
+          [1, -1],  [1, 0],  [1, 1]
+        ];
+        
+        for (const [dx, dy] of neighbors) {
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+            const nIdx = (ny * width + nx) * 4;
+            const nr = data[nIdx];
+            const ng = data[nIdx + 1];
+            const nb = data[nIdx + 2];
+            
+            const colorDiff = Math.abs(r - nr) + Math.abs(g - ng) + Math.abs(b - nb);
+            edgeStrength += colorDiff;
           }
-          console.log(`Removing background segment: ${label}`);
         }
+        edgeStrength /= neighbors.length;
+        
+        // Color variance (backgrounds tend to be more uniform)
+        let colorVariance = 0;
+        for (const [dx, dy] of neighbors) {
+          const nx = x + dx;
+          const ny = y + dy;
+          if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
+            const nIdx = (ny * width + nx) * 4;
+            const nr = data[nIdx];
+            const ng = data[nIdx + 1];
+            const nb = data[nIdx + 2];
+            
+            const avgR = (r + nr) / 2;
+            const avgG = (g + ng) / 2;
+            const avgB = (b + nb) / 2;
+            
+            colorVariance += Math.abs(r - avgR) + Math.abs(g - avgG) + Math.abs(b - avgB);
+          }
+        }
+        colorVariance /= neighbors.length;
+        
+        // Combine scores to determine if pixel is foreground
+        const edgeScore = Math.min(edgeStrength / 100, 1);
+        const varianceScore = Math.min(colorVariance / 50, 1);
+        
+        // Final score combining center bias, edge strength, and color variance
+        const finalScore = (centerScore * 0.3) + (edgeScore * 0.4) + (varianceScore * 0.3);
+        
+        // Apply threshold with some tolerance
+        mask[idx] = finalScore > 0.35 ? 255 : 0;
       }
     }
     
-    // Apply the final mask
-    for (let i = 0; i < finalMask.length; i++) {
-      data[i * 4 + 3] = finalMask[i]; // Set alpha channel
+    // Step 3: Morphological closing to fill gaps
+    const closedMask = new Uint8Array(mask.length);
+    const kernelSize = 2;
+    
+    for (let y = kernelSize; y < height - kernelSize; y++) {
+      for (let x = kernelSize; x < width - kernelSize; x++) {
+        const idx = y * width + x;
+        let maxVal = 0;
+        
+        // Dilation
+        for (let ky = -kernelSize; ky <= kernelSize; ky++) {
+          for (let kx = -kernelSize; kx <= kernelSize; kx++) {
+            const nIdx = (y + ky) * width + (x + kx);
+            if (nIdx >= 0 && nIdx < mask.length) {
+              maxVal = Math.max(maxVal, mask[nIdx]);
+            }
+          }
+        }
+        closedMask[idx] = maxVal;
+      }
     }
     
-    outputCtx.putImageData(outputImageData, 0, 0);
-    console.log('AI background removal completed');
+    // Step 4: Erosion
+    const finalMask = new Uint8Array(mask.length);
+    for (let y = kernelSize; y < height - kernelSize; y++) {
+      for (let x = kernelSize; x < width - kernelSize; x++) {
+        const idx = y * width + x;
+        let minVal = 255;
+        
+        for (let ky = -kernelSize; ky <= kernelSize; ky++) {
+          for (let kx = -kernelSize; kx <= kernelSize; kx++) {
+            const nIdx = (y + ky) * width + (x + kx);
+            if (nIdx >= 0 && nIdx < closedMask.length) {
+              minVal = Math.min(minVal, closedMask[nIdx]);
+            }
+          }
+        }
+        finalMask[idx] = minVal;
+      }
+    }
+    
+    // Step 5: Apply mask with smooth alpha
+    for (let i = 0; i < finalMask.length; i++) {
+      data[i * 4 + 3] = finalMask[i];
+    }
+    
+    // Create output
+    const outputCanvas = document.createElement('canvas');
+    outputCanvas.width = width;
+    outputCanvas.height = height;
+    const outputCtx = outputCanvas.getContext('2d');
+    if (!outputCtx) throw new Error('Could not get output context');
+    
+    outputCtx.putImageData(imageData, 0, 0);
     
     return new Promise((resolve, reject) => {
       outputCanvas.toBlob(
         (blob) => {
           if (blob) {
+            console.log('Background removal completed successfully');
             resolve(blob);
           } else {
             reject(new Error('Failed to create blob'));
@@ -262,9 +329,8 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     });
     
   } catch (error) {
-    console.error('Error in AI background removal:', error);
-    console.log('Falling back to rembg-style approach...');
-    return removeBackgroundRembg(imageElement);
+    console.error('Error in background removal:', error);
+    throw error;
   }
 };
 
