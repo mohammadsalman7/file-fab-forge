@@ -3,7 +3,7 @@ import { Scissors } from 'lucide-react';
 import { FileDropzone } from '@/components/FileDropzone';
 import { ProcessingCard } from '@/components/ProcessingCard';
 import { ToolCard } from '@/components/ToolCard';
-import { removeBackground, loadImage } from '@/utils/backgroundRemovalImproved';
+import { removeBackground, loadImage } from '@/utils/backgroundRemovalFixed';
 import { toast } from 'sonner';
 
 export const BackgroundRemover = () => {

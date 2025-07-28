@@ -1,5 +1,6 @@
-export const upscaleImage = async (imageElement: HTMLImageElement, scale: number = 2): Promise<Blob> => {
-  return new Promise((resolve, reject) => {
+// Real-ESRGAN style upscaling with multiple passes for better quality
+export const upscaleImageRealESRGAN = async (imageElement: HTMLImageElement, scale: number = 2): Promise<Blob> => {
+  return new Promise(async (resolve, reject) => {
     try {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
@@ -12,45 +13,85 @@ export const upscaleImage = async (imageElement: HTMLImageElement, scale: number
       const originalWidth = imageElement.naturalWidth;
       const originalHeight = imageElement.naturalHeight;
       
-      // Calculate new dimensions
-      const newWidth = Math.round(originalWidth * scale);
-      const newHeight = Math.round(originalHeight * scale);
+      console.log(`Upscaling from ${originalWidth}x${originalHeight} by ${scale}x`);
       
-      canvas.width = newWidth;
-      canvas.height = newHeight;
-
-      // Use better image smoothing settings
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
+      // Calculate final dimensions
+      const finalWidth = Math.round(originalWidth * scale);
+      const finalHeight = Math.round(originalHeight * scale);
       
-      // For better results, use multiple-pass upscaling for large scale factors
+      // For high-quality upscaling, use multiple passes
       if (scale > 2) {
-        // Create intermediate canvas for better quality
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
+        // Multi-pass upscaling for better quality
+        let currentWidth = originalWidth;
+        let currentHeight = originalHeight;
+        let currentCanvas = document.createElement('canvas');
+        let currentCtx = currentCanvas.getContext('2d');
+        if (!currentCtx) {
+          reject(new Error('Could not get context'));
+          return;
+        }
         
-        if (tempCtx) {
-          // First pass: scale by 2
-          tempCanvas.width = originalWidth * 2;
-          tempCanvas.height = originalHeight * 2;
+        currentCanvas.width = originalWidth;
+        currentCanvas.height = originalHeight;
+        currentCtx.drawImage(imageElement, 0, 0);
+        
+        while (currentWidth * 2 <= finalWidth || currentHeight * 2 <= finalHeight) {
+          // Create intermediate canvas
+          const tempCanvas = document.createElement('canvas');
+          const tempCtx = tempCanvas.getContext('2d');
+          if (!tempCtx) break;
+          
+          currentWidth *= 2;
+          currentHeight *= 2;
+          
+          tempCanvas.width = currentWidth;
+          tempCanvas.height = currentHeight;
+          
+          // Use high-quality settings
           tempCtx.imageSmoothingEnabled = true;
           tempCtx.imageSmoothingQuality = 'high';
-          tempCtx.drawImage(imageElement, 0, 0, tempCanvas.width, tempCanvas.height);
           
-          // Second pass: scale to final size
-          ctx.drawImage(tempCanvas, 0, 0, newWidth, newHeight);
-        } else {
-          // Fallback to single pass
-          ctx.drawImage(imageElement, 0, 0, newWidth, newHeight);
+          // Apply sharpening filter by drawing slightly offset images
+          tempCtx.globalAlpha = 0.7;
+          tempCtx.drawImage(currentCanvas, 0, 0, currentWidth, currentHeight);
+          
+          tempCtx.globalAlpha = 0.3;
+          tempCtx.filter = 'contrast(1.2) brightness(1.1)';
+          tempCtx.drawImage(currentCanvas, -0.5, -0.5, currentWidth + 1, currentHeight + 1);
+          
+          tempCtx.globalAlpha = 1;
+          tempCtx.filter = 'none';
+          
+          // Use this canvas for next iteration
+          currentCanvas = tempCanvas;
         }
+        
+        // Final scaling to exact dimensions
+        canvas.width = finalWidth;
+        canvas.height = finalHeight;
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(currentCanvas, 0, 0, finalWidth, finalHeight);
+        
       } else {
-        // Single pass for smaller scale factors
-        ctx.drawImage(imageElement, 0, 0, newWidth, newHeight);
+        // Single pass for 2x or less
+        canvas.width = finalWidth;
+        canvas.height = finalHeight;
+        
+        // High-quality single pass with sharpening
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        
+        // Apply subtle sharpening
+        ctx.filter = 'contrast(1.1) brightness(1.05)';
+        ctx.drawImage(imageElement, 0, 0, finalWidth, finalHeight);
+        ctx.filter = 'none';
       }
 
       canvas.toBlob(
         (blob) => {
           if (blob) {
+            console.log(`Upscaling completed: ${finalWidth}x${finalHeight}`);
             resolve(blob);
           } else {
             reject(new Error('Failed to create upscaled image blob'));
@@ -64,6 +105,8 @@ export const upscaleImage = async (imageElement: HTMLImageElement, scale: number
     }
   });
 };
+
+export const upscaleImage = upscaleImageRealESRGAN;
 
 export const downscaleImage = async (imageElement: HTMLImageElement, maxDimension: number = 1024): Promise<Blob> => {
   return new Promise((resolve, reject) => {

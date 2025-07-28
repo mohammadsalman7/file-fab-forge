@@ -5,7 +5,7 @@ import { ProcessingCard } from '@/components/ProcessingCard';
 import { ToolCard } from '@/components/ToolCard';
 import { Button } from '@/components/ui/button';
 import { upscaleImage, downscaleImage } from '@/utils/imageUpscaler';
-import { loadImage } from '@/utils/backgroundRemovalImproved';
+import { loadImage } from '@/utils/backgroundRemovalFixed';
 import { toast } from 'sonner';
 
 export const ImageUpscaler = () => {
