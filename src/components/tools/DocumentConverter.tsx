@@ -11,7 +11,7 @@ export const DocumentConverter = () => {
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [convertedFile, setConvertedFile] = useState<Blob | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [conversionType, setConversionType] = useState<'pdf' | 'image'>('pdf');
+  const [conversionType, setConversionType] = useState<'pdf' | 'word' | 'excel' | 'csv' | 'image' | 'png' | 'jpg' | 'svg'>('pdf');
 
   const handleFileSelect = (file: File) => {
     setOriginalFile(file);
@@ -22,6 +22,10 @@ export const DocumentConverter = () => {
       setConversionType('image');
     } else if (file.type.startsWith('image/')) {
       setConversionType('pdf');
+    } else if (file.type.includes('word') || file.type.includes('document')) {
+      setConversionType('pdf');
+    } else if (file.type.includes('excel') || file.type.includes('sheet')) {
+      setConversionType('csv');
     }
   };
 
@@ -93,7 +97,17 @@ export const DocumentConverter = () => {
   };
 
   const getAcceptedTypes = () => {
-    return ['image/*', 'application/pdf', 'text/plain'];
+    return [
+      'image/*', 
+      'application/pdf', 
+      'text/plain',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'text/csv',
+      'image/svg+xml'
+    ];
   };
 
   return (
@@ -108,7 +122,7 @@ export const DocumentConverter = () => {
             onFileSelect={handleFileSelect}
             acceptedTypes={getAcceptedTypes()}
             title="Drop your file here"
-            description="Supports images, PDFs, and text files"
+            description="Supports images, PDFs, Word, Excel, CSV, SVG, and text files"
             maxSize={50 * 1024 * 1024} // 50MB
           />
         ) : (
@@ -120,7 +134,7 @@ export const DocumentConverter = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {(originalFile.type.startsWith('image/') || originalFile.type === 'text/plain') && (
                 <Button
                   onClick={handleConvertToPdf}
@@ -132,12 +146,50 @@ export const DocumentConverter = () => {
               )}
 
               {originalFile.type === 'application/pdf' && (
+                <>
+                  <Button
+                    onClick={handleConvertToImage}
+                    disabled={isProcessing}
+                    className="bg-gradient-primary hover:opacity-90"
+                  >
+                    Convert to Images
+                  </Button>
+                  <Button
+                    onClick={() => toast.info('Word conversion coming soon!')}
+                    disabled={isProcessing}
+                    className="bg-gradient-primary hover:opacity-90"
+                  >
+                    Convert to Word
+                  </Button>
+                </>
+              )}
+
+              {originalFile.type.startsWith('image/') && (
+                <>
+                  <Button
+                    onClick={() => toast.info('PNG conversion available via download')}
+                    disabled={isProcessing}
+                    className="bg-gradient-primary hover:opacity-90"
+                  >
+                    Convert to PNG
+                  </Button>
+                  <Button
+                    onClick={() => toast.info('SVG conversion coming soon!')}
+                    disabled={isProcessing}
+                    className="bg-gradient-primary hover:opacity-90"
+                  >
+                    Convert to SVG
+                  </Button>
+                </>
+              )}
+
+              {(originalFile.type.includes('excel') || originalFile.type.includes('sheet')) && (
                 <Button
-                  onClick={handleConvertToImage}
+                  onClick={() => toast.info('CSV conversion coming soon!')}
                   disabled={isProcessing}
                   className="bg-gradient-primary hover:opacity-90"
                 >
-                  Convert to Images
+                  Convert to CSV
                 </Button>
               )}
             </div>

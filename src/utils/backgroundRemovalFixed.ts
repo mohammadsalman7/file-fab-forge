@@ -203,7 +203,7 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     const data = outputImageData.data;
     
     // Define what to keep vs remove (FIXED LOGIC)
-    const subjectLabels = ['person', 'face', 'animal', 'dog', 'cat', 'bicycle', 'car', 'motorbike', 'bottle', 'chair', 'sofa', 'plant', 'potted plant', 'food', 'book', 'laptop', 'mouse', 'keyboard', 'cell phone'];
+    const subjectLabels = ['person', 'face', 'animal', 'dog', 'cat', 'bicycle', 'car', 'motorbike', 'bottle', 'chair', 'sofa', 'plant', 'potted plant', 'food', 'book', 'laptop', 'mouse', 'keyboard', 'cell phone', 'signboard', 'trade name', 'logo', 'text', 'sign', 'banner', 'advertisement'];
     const backgroundLabels = ['sky', 'cloud', 'wall', 'building', 'floor', 'ceiling', 'road', 'grass', 'sidewalk', 'earth', 'mountain', 'sea', 'water', 'river', 'tree', 'field'];
     
     // Create final mask - start with keep everything
@@ -216,12 +216,17 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
         const label = segment.label.toLowerCase();
         console.log(`Processing segment: ${label}`);
         
+        // Check if this is a subject element that should be kept
+        const isSubject = subjectLabels.some(subjectLabel => 
+          label.includes(subjectLabel) || subjectLabel.includes(label)
+        );
+        
         // Check if this is a background element that should be removed
         const isBackground = backgroundLabels.some(bgLabel => 
           label.includes(bgLabel) || bgLabel.includes(label)
         );
         
-        if (isBackground) {
+        if (isBackground && !isSubject) {
           // Remove this segment (set to transparent)
           for (let i = 0; i < segment.mask.data.length; i++) {
             const maskValue = segment.mask.data[i];
