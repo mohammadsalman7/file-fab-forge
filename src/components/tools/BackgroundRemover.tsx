@@ -3,7 +3,7 @@ import { Scissors } from 'lucide-react';
 import { FileDropzone } from '@/components/FileDropzone';
 import { ProcessingCard } from '@/components/ProcessingCard';
 import { ToolCard } from '@/components/ToolCard';
-import { removeBackground, loadImage } from '@/utils/backgroundRemoval';
+import { removeBackground, loadImage } from '@/utils/backgroundRemovalImproved';
 import { toast } from 'sonner';
 
 export const BackgroundRemover = () => {
@@ -25,21 +25,23 @@ export const BackgroundRemover = () => {
     setProgress(10);
 
     try {
-      toast.info('Loading AI model... This may take a moment.');
-      setProgress(30);
+      toast.info('Loading AI model... This may take a moment on first use.');
+      setProgress(20);
 
       const imageElement = await loadImage(originalFile);
-      setProgress(50);
+      setProgress(40);
 
-      toast.info('Processing image...');
+      toast.info('Processing image with AI...');
+      setProgress(60);
+      
       const result = await removeBackground(imageElement);
       setProgress(100);
 
       setProcessedFile(result);
-      toast.success('Background removed successfully!');
+      toast.success('Background removed successfully! Check the result below.');
     } catch (error) {
       console.error('Error removing background:', error);
-      toast.error('Failed to remove background. Please try again.');
+      toast.error('Failed to remove background. The AI model may still be loading, please try again.');
     } finally {
       setIsProcessing(false);
     }

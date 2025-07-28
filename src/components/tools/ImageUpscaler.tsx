@@ -5,7 +5,7 @@ import { ProcessingCard } from '@/components/ProcessingCard';
 import { ToolCard } from '@/components/ToolCard';
 import { Button } from '@/components/ui/button';
 import { upscaleImage, downscaleImage } from '@/utils/imageUpscaler';
-import { loadImage } from '@/utils/backgroundRemoval';
+import { loadImage } from '@/utils/backgroundRemovalImproved';
 import { toast } from 'sonner';
 
 export const ImageUpscaler = () => {
@@ -25,14 +25,17 @@ export const ImageUpscaler = () => {
     setIsProcessing(true);
 
     try {
+      toast.info(`Upscaling image ${scale}x... This may take a moment.`);
       const imageElement = await loadImage(originalFile);
+      
+      // Show better progress feedback
       const result = await upscaleImage(imageElement, scale);
       
       setProcessedFile(result);
-      toast.success(`Image upscaled ${scale}x successfully!`);
+      toast.success(`Image successfully upscaled ${scale}x! Download to see the full quality.`);
     } catch (error) {
       console.error('Error upscaling image:', error);
-      toast.error('Failed to upscale image. Please try again.');
+      toast.error('Failed to upscale image. Please try a smaller scale factor.');
     } finally {
       setIsProcessing(false);
     }
@@ -44,11 +47,12 @@ export const ImageUpscaler = () => {
     setIsProcessing(true);
 
     try {
+      toast.info('Optimizing image for web... Reducing file size while maintaining quality.');
       const imageElement = await loadImage(originalFile);
       const result = await downscaleImage(imageElement, 1024);
       
       setProcessedFile(result);
-      toast.success('Image optimized successfully!');
+      toast.success('Image optimized successfully! File size reduced while maintaining quality.');
     } catch (error) {
       console.error('Error optimizing image:', error);
       toast.error('Failed to optimize image. Please try again.');

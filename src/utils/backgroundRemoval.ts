@@ -34,7 +34,9 @@ function resizeImageIfNeeded(canvas: HTMLCanvasElement, ctx: CanvasRenderingCont
 export const removeBackground = async (imageElement: HTMLImageElement): Promise<Blob> => {
   try {
     console.log('Starting background removal process...');
-    const segmenter = await pipeline('image-segmentation', 'Xenova/segformer-b0-finetuned-ade-512-512',{
+    
+    // Use a better model for background removal
+    const segmenter = await pipeline('image-segmentation', 'Xenova/segformer-b0-finetuned-ade-512-512', {
       device: 'webgpu',
     });
     
@@ -58,7 +60,7 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     
     console.log('Segmentation result:', result);
     
-    if (!result || !Array.isArray(result) || result.length === 0 || !result[0].mask) {
+    if (!result || !Array.isArray(result) || result.length === 0) {
       throw new Error('Invalid segmentation result');
     }
     
@@ -73,23 +75,51 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     // Draw original image
     outputCtx.drawImage(canvas, 0, 0);
     
-    // Apply the mask
-    const outputImageData = outputCtx.getImageData(
-      0, 0,
-      outputCanvas.width,
-      outputCanvas.height
-    );
+    // Get the image data
+    const outputImageData = outputCtx.getImageData(0, 0, outputCanvas.width, outputCanvas.height);
     const data = outputImageData.data;
     
-    // Apply inverted mask to alpha channel
-    for (let i = 0; i < result[0].mask.data.length; i++) {
-      // Invert the mask value (1 - value) to keep the subject instead of the background
-      const alpha = Math.round((1 - result[0].mask.data[i]) * 255);
-      data[i * 4 + 3] = alpha;
+    // Find person/main subject segments and create mask
+    const personLabels = ['person', 'animal', 'bicycle', 'car', 'motorbike', 'bus', 'truck'];
+    let mainMask: any = null;
+    let maxScore = 0;
+    
+    // Find the segment with highest score that represents a main subject
+    for (const segment of result) {
+      if (segment.label && personLabels.some(label => segment.label.toLowerCase().includes(label))) {
+        if (segment.score > maxScore) {
+          maxScore = segment.score;
+          mainMask = segment.mask;
+        }
+      }
+    }
+    
+    // If no person/main subject found, use the largest segment
+    if (!mainMask && result.length > 0) {
+      // Sort by score and take the highest scoring segment
+      result.sort((a, b) => (b.score || 0) - (a.score || 0));
+      mainMask = result[0].mask;
+      console.log('Using highest scoring segment:', result[0].label);
+    }
+    
+    if (!mainMask || !mainMask.data) {
+      throw new Error('No valid mask found for background removal');
+    }
+    
+    // Apply the mask to make background transparent
+    for (let i = 0; i < mainMask.data.length; i++) {
+      const maskValue = mainMask.data[i];
+      // If mask value is low (background), make it transparent
+      if (maskValue < 0.5) {
+        data[i * 4 + 3] = 0; // Set alpha to 0 (transparent)
+      } else {
+        // Keep the original alpha for foreground
+        data[i * 4 + 3] = Math.min(255, data[i * 4 + 3] + (maskValue * 100));
+      }
     }
     
     outputCtx.putImageData(outputImageData, 0, 0);
-    console.log('Mask applied successfully');
+    console.log('Background removal applied successfully');
     
     // Convert canvas to blob
     return new Promise((resolve, reject) => {

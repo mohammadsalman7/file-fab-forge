@@ -9,19 +9,44 @@ export const upscaleImage = async (imageElement: HTMLImageElement, scale: number
         return;
       }
 
-      // Set new dimensions
-      const newWidth = imageElement.naturalWidth * scale;
-      const newHeight = imageElement.naturalHeight * scale;
+      const originalWidth = imageElement.naturalWidth;
+      const originalHeight = imageElement.naturalHeight;
+      
+      // Calculate new dimensions
+      const newWidth = Math.round(originalWidth * scale);
+      const newHeight = Math.round(originalHeight * scale);
       
       canvas.width = newWidth;
       canvas.height = newHeight;
 
-      // Use image smoothing for better quality
+      // Use better image smoothing settings
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
-
-      // Draw the upscaled image
-      ctx.drawImage(imageElement, 0, 0, newWidth, newHeight);
+      
+      // For better results, use multiple-pass upscaling for large scale factors
+      if (scale > 2) {
+        // Create intermediate canvas for better quality
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        
+        if (tempCtx) {
+          // First pass: scale by 2
+          tempCanvas.width = originalWidth * 2;
+          tempCanvas.height = originalHeight * 2;
+          tempCtx.imageSmoothingEnabled = true;
+          tempCtx.imageSmoothingQuality = 'high';
+          tempCtx.drawImage(imageElement, 0, 0, tempCanvas.width, tempCanvas.height);
+          
+          // Second pass: scale to final size
+          ctx.drawImage(tempCanvas, 0, 0, newWidth, newHeight);
+        } else {
+          // Fallback to single pass
+          ctx.drawImage(imageElement, 0, 0, newWidth, newHeight);
+        }
+      } else {
+        // Single pass for smaller scale factors
+        ctx.drawImage(imageElement, 0, 0, newWidth, newHeight);
+      }
 
       canvas.toBlob(
         (blob) => {
