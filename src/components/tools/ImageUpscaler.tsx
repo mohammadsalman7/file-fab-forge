@@ -25,14 +25,13 @@ export const ImageUpscaler = () => {
     setIsProcessing(true);
 
     try {
-      toast.info(`Upscaling image ${scale}x... This may take a moment.`);
+      toast.info(`Upscaling image to ${scale}x HD quality... This may take a moment.`);
       const imageElement = await loadImage(originalFile);
       
-      // Show better progress feedback
       const result = await upscaleImage(imageElement, scale);
       
       setProcessedFile(result);
-      toast.success(`Image successfully upscaled ${scale}x! Download to see the full quality.`);
+      toast.success(`Image successfully upscaled to ${scale}x HD quality! Download to see the full resolution.`);
     } catch (error) {
       console.error('Error upscaling image:', error);
       toast.error('Failed to upscale image. Please try a smaller scale factor.');
@@ -67,7 +66,7 @@ export const ImageUpscaler = () => {
     const url = URL.createObjectURL(processedFile);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${originalFile.name.split('.')[0]}_processed.png`;
+    a.download = `${originalFile.name.split('.')[0]}_upscaled_${scale}x_hd.png`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -77,7 +76,7 @@ export const ImageUpscaler = () => {
   return (
     <ToolCard
       title="Image Upscaler"
-      description="Upscale and optimize your images"
+      description="Enhance image quality with AI upscaling to HD"
       icon={<Maximize2 className="h-6 w-6" />}
     >
       <div className="space-y-6">
@@ -89,59 +88,35 @@ export const ImageUpscaler = () => {
             description="Supports JPG, PNG, WebP formats"
           />
         ) : (
-          <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                onClick={() => setScale(2)}
-                variant={scale === 2 ? "default" : "outline"}
-                className="text-sm"
-              >
-                2x Scale
-              </Button>
-              <Button
-                onClick={() => setScale(4)}
-                variant={scale === 4 ? "default" : "outline"}
-                className="text-sm"
-              >
-                4x Scale
-              </Button>
-            </div>
+          <ProcessingCard
+            title="Upscale to HD"
+            description="AI-powered image enhancement"
+            icon={<Maximize2 className="h-5 w-5" />}
+            isProcessing={isProcessing}
+            progress={isProcessing ? 75 : 0}
+            originalFile={originalFile}
+            processedFile={processedFile}
+            onProcess={handleUpscale}
+            onDownload={handleDownload}
+          />
+        )}
 
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                onClick={handleUpscale}
-                disabled={isProcessing}
-                className="bg-gradient-primary hover:opacity-90"
-              >
-                Upscale {scale}x
-              </Button>
-              <Button
-                onClick={handleOptimize}
-                disabled={isProcessing}
-                variant="outline"
-                className="border-primary/30"
-              >
-                Optimize
-              </Button>
-            </div>
-
-            {processedFile && (
-              <Button
-                onClick={handleDownload}
-                className="w-full bg-green-600 hover:bg-green-700"
-              >
-                Download Result
-              </Button>
-            )}
-
-            {originalFile && (
-              <div className="p-3 bg-secondary/20 rounded-lg">
-                <p className="text-sm font-medium truncate">{originalFile.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {(originalFile.size / (1024 * 1024)).toFixed(1)} MB
-                </p>
-              </div>
-            )}
+        {originalFile && !isProcessing && (
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              onClick={() => setScale(2)}
+              variant={scale === 2 ? "default" : "outline"}
+              className="text-sm"
+            >
+              2x HD
+            </Button>
+            <Button
+              onClick={() => setScale(4)}
+              variant={scale === 4 ? "default" : "outline"}
+              className="text-sm"
+            >
+              4x Ultra HD
+            </Button>
           </div>
         )}
 

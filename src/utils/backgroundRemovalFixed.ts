@@ -226,7 +226,7 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     
     // Step 2: Create initial mask based on color difference from background
     const mask = new Uint8Array(width * height);
-    const bgThreshold = 30; // Tolerance for background color matching
+    const bgThreshold = 25; // More precise tolerance for background color matching
     
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -289,7 +289,7 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
         const edgeStrength = Math.min(gradient / 50, 1); // Normalize gradient
         
         // If there's a strong edge, likely part of the subject
-        if (gradient > 20 || originalMask > 0) {
+        if (gradient > 15 || originalMask > 0) { // More sensitive edge detection
           refinedMask[idx] = 255;
         } else {
           refinedMask[idx] = 0;

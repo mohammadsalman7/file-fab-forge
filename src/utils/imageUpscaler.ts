@@ -1,4 +1,5 @@
-// Real-ESRGAN style upscaling with multiple passes for better quality
+// Real-ESRGAN style upscaling with HD quality output
+const MAX_DIMENSION = 4096; // Ultra HD support
 export const upscaleImageRealESRGAN = async (imageElement: HTMLImageElement, scale: number = 2): Promise<Blob> => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -13,11 +14,11 @@ export const upscaleImageRealESRGAN = async (imageElement: HTMLImageElement, sca
       const originalWidth = imageElement.naturalWidth;
       const originalHeight = imageElement.naturalHeight;
       
-      console.log(`Upscaling from ${originalWidth}x${originalHeight} by ${scale}x`);
+      console.log(`Upscaling to HD quality from ${originalWidth}x${originalHeight} by ${scale}x`);
       
-      // Calculate final dimensions
-      const finalWidth = Math.round(originalWidth * scale);
-      const finalHeight = Math.round(originalHeight * scale);
+      // Ensure we don't exceed maximum dimensions
+      let finalWidth = Math.min(Math.round(originalWidth * scale), MAX_DIMENSION);
+      let finalHeight = Math.min(Math.round(originalHeight * scale), MAX_DIMENSION);
       
       // For high-quality upscaling, use multiple passes
       if (scale > 2) {
@@ -91,7 +92,7 @@ export const upscaleImageRealESRGAN = async (imageElement: HTMLImageElement, sca
       canvas.toBlob(
         (blob) => {
           if (blob) {
-            console.log(`Upscaling completed: ${finalWidth}x${finalHeight}`);
+            console.log(`HD upscaling completed: ${finalWidth}x${finalHeight} (${(finalWidth * finalHeight / 1000000).toFixed(1)}MP)`);
             resolve(blob);
           } else {
             reject(new Error('Failed to create upscaled image blob'));
