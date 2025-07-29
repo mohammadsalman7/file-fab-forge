@@ -36,8 +36,8 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
   try {
     console.log('Starting advanced AI background removal...');
     
-    // Use a better model specifically for background removal
-    const segmenter = await pipeline('image-segmentation', 'Xenova/detr-resnet-50-panoptic', {
+    // Use RMBG model specifically designed for background removal
+    const segmenter = await pipeline('image-segmentation', 'briaai/RMBG-1.4', {
       device: 'webgpu',
     });
     
