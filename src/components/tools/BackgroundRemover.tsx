@@ -1,36 +1,29 @@
-import { useState, useRef } from 'react';
-import { Scissors, Download, Palette, Focus, Sparkles, Upload } from 'lucide-react';
-import { FileDropzone } from '@/components/FileDropzone';
-import { ToolCard } from '@/components/ToolCard';
-import { removeBackground, loadImage } from '@/utils/advancedBackgroundRemoval';
-import { addCustomBackground, addBlurBackground, addShadowEffect } from '@/utils/backgroundRemovalFixed';
+import { useState } from 'react';
+import { Upload, Download, Loader2, Edit3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { Progress } from '@/components/ui/progress';
+import { ToolCard } from '@/components/ToolCard';
+import { FileDropzone } from '@/components/FileDropzone';
+import { BeforeAfterComparison } from './BeforeAfterComparison';
+import { ManualEditor } from './ManualEditor';
+import { removeBackground, loadImage } from '@/utils/advancedBackgroundRemoval';
 import { toast } from 'sonner';
 
 export const BackgroundRemover = () => {
   const [originalFile, setOriginalFile] = useState<File | null>(null);
-  const [transparentImage, setTransparentImage] = useState<HTMLImageElement | null>(null);
-  const [processedFile, setProcessedFile] = useState<Blob | null>(null);
+  const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
+  const [processedImage, setProcessedImage] = useState<string | null>(null);
+  const [finalImage, setFinalImage] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [backgroundColor, setBackgroundColor] = useState('#ffffff');
-  const [blurRadius, setBlurRadius] = useState([10]);
-  const [shadowOffsetX, setShadowOffsetX] = useState([10]);
-  const [shadowOffsetY, setShadowOffsetY] = useState([10]);
-  const [shadowBlur, setShadowBlur] = useState([15]);
-  const backgroundFileRef = useRef<HTMLInputElement>(null);
+  const [showManualEditor, setShowManualEditor] = useState(false);
 
   const handleFileSelect = (file: File) => {
     setOriginalFile(file);
-    setTransparentImage(null);
-    setProcessedFile(null);
+    setOriginalImageUrl(URL.createObjectURL(file));
+    setProcessedImage(null);
+    setFinalImage(null);
     setProgress(0);
+    setShowManualEditor(false);
   };
 
   const handleRemoveBackground = async () => {
@@ -40,320 +33,175 @@ export const BackgroundRemover = () => {
     setProgress(10);
 
     try {
-      toast.info('Loading advanced AI model for precise edge detection...');
-      setProgress(20);
-
+      setProgress(30);
+      toast.info('Loading AI model... This may take a moment on first use.');
       const imageElement = await loadImage(originalFile);
-      setProgress(40);
-
-      toast.info('Analyzing borders and removing background...');
+      
       setProgress(60);
+      toast.info('Processing image with AI...');
+      const resultBlob = await removeBackground(imageElement);
       
-      const result = await removeBackground(imageElement);
-      setProgress(80);
-
-      // Create transparent image element for further processing
-      const transparentImg = new Image();
-      transparentImg.onload = () => {
-        setTransparentImage(transparentImg);
-        setProgress(100);
-        toast.success('Background removed with precision! Now add professional effects below.');
-      };
-      transparentImg.src = URL.createObjectURL(result);
+      setProgress(90);
+      const imageUrl = URL.createObjectURL(resultBlob);
+      setProcessedImage(imageUrl);
+      setFinalImage(imageUrl);
       
-      setProcessedFile(result);
+      setProgress(100);
+      toast.success('Background removed successfully!');
     } catch (error) {
-      console.error('Error removing background:', error);
-      toast.error('Failed to remove background. Please try again.');
+      console.error('Background removal failed:', error);
+      toast.error('Failed to remove background. Please try a different image.');
     } finally {
       setIsProcessing(false);
+      setProgress(0);
     }
   };
 
-  const handleCustomBackground = async (type: 'color' | 'image' | 'blur' | 'shadow') => {
-    if (!transparentImage) return;
-
-    setIsProcessing(true);
-    try {
-      let result: Blob;
-      
-      switch (type) {
-        case 'color':
-          result = await addCustomBackground(transparentImage, backgroundColor);
-          toast.success('Custom background added!');
-          break;
-        case 'image':
-          if (backgroundFileRef.current?.files?.[0]) {
-            const bgImg = await loadImage(backgroundFileRef.current.files[0]);
-            result = await addCustomBackground(transparentImage, bgImg);
-            toast.success('Background image applied!');
-          } else {
-            toast.error('Please select a background image first');
-            return;
-          }
-          break;
-        case 'blur':
-          result = await addBlurBackground(transparentImage, blurRadius[0]);
-          toast.success('Blur effect applied!');
-          break;
-        case 'shadow':
-          result = await addShadowEffect(
-            transparentImage,
-            'rgba(0,0,0,0.3)',
-            shadowOffsetX[0],
-            shadowOffsetY[0],
-            shadowBlur[0]
-          );
-          toast.success('Shadow effect added for realistic depth!');
-          break;
-        default:
-          return;
-      }
-      
-      setProcessedFile(result);
-    } catch (error) {
-      console.error('Error applying effect:', error);
-      toast.error('Failed to apply effect. Please try again.');
-    } finally {
-      setIsProcessing(false);
-    }
+  const handleManualEdit = (editedBlob: Blob) => {
+    const imageUrl = URL.createObjectURL(editedBlob);
+    setFinalImage(imageUrl);
+    setShowManualEditor(false);
+    toast.success('Manual edits applied successfully!');
   };
 
   const handleDownload = (filename: string) => {
-    if (!processedFile || !originalFile) return;
+    const imageToDownload = finalImage || processedImage;
+    if (!imageToDownload) return;
 
-    const url = URL.createObjectURL(processedFile);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${originalFile.name.split('.')[0]}_${filename}.png`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    const link = document.createElement('a');
+    link.href = imageToDownload;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast.success('Image downloaded successfully!');
   };
 
   return (
     <ToolCard
-      title="Professional Background Remover"
-      description="AI-powered background removal with professional photo editing features"
-      icon={<Scissors className="h-6 w-6" />}
+      title="AI Background Remover"
+      description="Professional background removal with manual editing tools"
+      icon={<Upload className="h-6 w-6" />}
     >
       <div className="space-y-6">
         {!originalFile ? (
           <FileDropzone
             onFileSelect={handleFileSelect}
             acceptedTypes={['image/*']}
-            title="Drop your image here for professional editing"
-            description="Supports JPG, PNG, WebP formats"
+            title="Drop your image here"
+            description="Supports JPG, PNG, WebP - works with logos, people, products, and text"
           />
         ) : (
           <div className="space-y-6">
-            {/* Step 1: Background Removal */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Scissors className="h-5 w-5" />
-                  Step 1: Remove Background
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {isProcessing && !transparentImage ? (
-                  <div className="space-y-4">
-                    <Progress value={progress} className="w-full" />
-                    <p className="text-sm text-muted-foreground text-center">
-                      Processing with advanced edge detection...
+            {/* Processing Section */}
+            {!processedImage && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="font-medium">Ready to Process</h3>
+                    <p className="text-sm text-muted-foreground">
+                      File: {originalFile.name} ({(originalFile.size / 1024 / 1024).toFixed(2)} MB)
                     </p>
                   </div>
-                ) : !transparentImage ? (
-                  <Button onClick={handleRemoveBackground} className="w-full">
-                    <Scissors className="h-4 w-4 mr-2" />
-                    Remove Background with Precision
+                  <Button 
+                    onClick={handleRemoveBackground}
+                    disabled={isProcessing}
+                    className="min-w-[120px]"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      'Remove Background'
+                    )}
                   </Button>
-                ) : (
-                  <div className="space-y-4">
-                    <p className="text-sm text-green-600">✓ Background removed successfully!</p>
-                    <Button
-                      variant="outline"
-                      onClick={() => handleDownload('transparent')}
-                      className="w-full"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download Transparent Image
-                    </Button>
+                </div>
+
+                {isProcessing && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Processing with AI...</span>
+                      <span>{progress}%</span>
+                    </div>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div 
+                        className="bg-primary h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${progress}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      First-time model loading may take longer. Subsequent uses will be faster.
+                    </p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
-
-            {/* Step 2: Professional Effects */}
-            {transparentImage && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5" />
-                    Step 2: Professional Effects
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Tabs defaultValue="background" className="space-y-4">
-                    <TabsList className="grid w-full grid-cols-4">
-                      <TabsTrigger value="background">Custom Background</TabsTrigger>
-                      <TabsTrigger value="image">Image Background</TabsTrigger>
-                      <TabsTrigger value="blur">Blur Effect</TabsTrigger>
-                      <TabsTrigger value="shadow">Add Shadow</TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="background" className="space-y-4">
-                      <div className="space-y-3">
-                        <Label>Background Color</Label>
-                        <div className="flex gap-3">
-                          <Input
-                            type="color"
-                            value={backgroundColor}
-                            onChange={(e) => setBackgroundColor(e.target.value)}
-                            className="w-20 h-10"
-                          />
-                          <Button
-                            onClick={() => handleCustomBackground('color')}
-                            disabled={isProcessing}
-                            className="flex-1"
-                          >
-                            <Palette className="h-4 w-4 mr-2" />
-                            Apply Color Background
-                          </Button>
-                        </div>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="image" className="space-y-4">
-                      <div className="space-y-3">
-                        <Label>Background Image</Label>
-                        <Input
-                          ref={backgroundFileRef}
-                          type="file"
-                          accept="image/*"
-                          className="cursor-pointer"
-                        />
-                        <Button
-                          onClick={() => handleCustomBackground('image')}
-                          disabled={isProcessing}
-                          className="w-full"
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          Apply Image Background
-                        </Button>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="blur" className="space-y-4">
-                      <div className="space-y-3">
-                        <Label>Blur Radius: {blurRadius[0]}px</Label>
-                        <Slider
-                          value={blurRadius}
-                          onValueChange={setBlurRadius}
-                          min={5}
-                          max={30}
-                          step={1}
-                          className="w-full"
-                        />
-                        <Button
-                          onClick={() => handleCustomBackground('blur')}
-                          disabled={isProcessing}
-                          className="w-full"
-                        >
-                          <Focus className="h-4 w-4 mr-2" />
-                          Apply Blur Background
-                        </Button>
-                      </div>
-                    </TabsContent>
-
-                    <TabsContent value="shadow" className="space-y-4">
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label>Shadow X: {shadowOffsetX[0]}px</Label>
-                            <Slider
-                              value={shadowOffsetX}
-                              onValueChange={setShadowOffsetX}
-                              min={-20}
-                              max={20}
-                              step={1}
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label>Shadow Y: {shadowOffsetY[0]}px</Label>
-                            <Slider
-                              value={shadowOffsetY}
-                              onValueChange={setShadowOffsetY}
-                              min={-20}
-                              max={20}
-                              step={1}
-                            />
-                          </div>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Shadow Blur: {shadowBlur[0]}px</Label>
-                          <Slider
-                            value={shadowBlur}
-                            onValueChange={setShadowBlur}
-                            min={5}
-                            max={30}
-                            step={1}
-                          />
-                        </div>
-                        <Button
-                          onClick={() => handleCustomBackground('shadow')}
-                          disabled={isProcessing}
-                          className="w-full"
-                        >
-                          <Sparkles className="h-4 w-4 mr-2" />
-                          Add Realistic Shadow
-                        </Button>
-                      </div>
-                    </TabsContent>
-                  </Tabs>
-
-                  {processedFile && (
-                    <div className="mt-6 pt-4 border-t">
-                      <Button
-                        onClick={() => handleDownload('professional')}
-                        className="w-full"
-                        size="lg"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download Professional Image
-                      </Button>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+              </div>
             )}
 
-            {/* Image Preview */}
-            {processedFile && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Preview</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="relative">
-                    <img
-                      src={URL.createObjectURL(processedFile)}
-                      alt="Processed"
-                      className="max-w-full h-auto rounded-lg border"
-                    />
+            {/* Before/After Comparison */}
+            {originalImageUrl && processedImage && !showManualEditor && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium">Before & After Comparison</h3>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowManualEditor(true)}
+                    >
+                      <Edit3 className="h-4 w-4 mr-2" />
+                      Manual Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleDownload(`background-removed-${Date.now()}.png`)}
+                      size="sm"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download
+                    </Button>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+                
+                <BeforeAfterComparison
+                  beforeImage={originalImageUrl}
+                  afterImage={finalImage || processedImage}
+                />
+              </div>
             )}
 
+            {/* Manual Editor */}
+            {showManualEditor && originalImageUrl && processedImage && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium">Manual Editor</h3>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowManualEditor(false)}
+                  >
+                    Back to Comparison
+                  </Button>
+                </div>
+                
+                <ManualEditor
+                  originalImage={originalImageUrl}
+                  processedImage={processedImage}
+                  onSave={handleManualEdit}
+                />
+              </div>
+            )}
+
+            {/* Start Over */}
             <div className="text-center">
               <button
                 onClick={() => {
                   setOriginalFile(null);
-                  setTransparentImage(null);
-                  setProcessedFile(null);
+                  setOriginalImageUrl(null);
+                  setProcessedImage(null);
+                  setFinalImage(null);
                   setProgress(0);
+                  setShowManualEditor(false);
                 }}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
