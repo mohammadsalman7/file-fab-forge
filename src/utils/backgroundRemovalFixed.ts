@@ -165,10 +165,10 @@ export const removeBackgroundRembg = async (imageElement: HTMLImageElement): Pro
   }
 };
 
-// Advanced background removal with precise border detection for logos/text
+// Professional-grade background removal with pixel-perfect edge cleaning
 export const removeBackground = async (imageElement: HTMLImageElement): Promise<Blob> => {
   try {
-    console.log('Starting advanced background removal with border detection...');
+    console.log('Starting professional background removal with pixel-perfect edges...');
     
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -183,36 +183,39 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     
     console.log(`Processing image: ${width}x${height}`);
     
-    // Step 1: Detect background color (most common color around edges)
+    // Step 1: Enhanced background color detection with multi-edge sampling
     const backgroundColors = new Map();
-    const sampleSize = 5; // More frequent sampling for better detection
+    const sampleSize = 2; // Dense sampling for maximum accuracy
     
-    // Sample top and bottom edges
+    // Sample all four edges with higher density
     for (let x = 0; x < width; x += sampleSize) {
-      for (let y of [0, height - 1]) {
-        const idx = (y * width + x) * 4;
-        const r = data[idx];
-        const g = data[idx + 1];
-        const b = data[idx + 2];
-        const colorKey = `${r},${g},${b}`;
-        backgroundColors.set(colorKey, (backgroundColors.get(colorKey) || 0) + 1);
+      for (let y of [0, 1, height - 2, height - 1]) {
+        if (y >= 0 && y < height) {
+          const idx = (y * width + x) * 4;
+          const r = data[idx];
+          const g = data[idx + 1];
+          const b = data[idx + 2];
+          const colorKey = `${r},${g},${b}`;
+          backgroundColors.set(colorKey, (backgroundColors.get(colorKey) || 0) + 1);
+        }
       }
     }
     
-    // Sample left and right edges
     for (let y = 0; y < height; y += sampleSize) {
-      for (let x of [0, width - 1]) {
-        const idx = (y * width + x) * 4;
-        const r = data[idx];
-        const g = data[idx + 1];
-        const b = data[idx + 2];
-        const colorKey = `${r},${g},${b}`;
-        backgroundColors.set(colorKey, (backgroundColors.get(colorKey) || 0) + 1);
+      for (let x of [0, 1, width - 2, width - 1]) {
+        if (x >= 0 && x < width) {
+          const idx = (y * width + x) * 4;
+          const r = data[idx];
+          const g = data[idx + 1];
+          const b = data[idx + 2];
+          const colorKey = `${r},${g},${b}`;
+          backgroundColors.set(colorKey, (backgroundColors.get(colorKey) || 0) + 1);
+        }
       }
     }
     
     // Find most common background color
-    let bgColor = { r: 255, g: 255, b: 255 }; // Default to white
+    let bgColor = { r: 255, g: 255, b: 255 };
     let maxCount = 0;
     for (const [colorKey, count] of backgroundColors) {
       if (count > maxCount) {
@@ -224,9 +227,9 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     
     console.log(`Detected background color: rgb(${bgColor.r}, ${bgColor.g}, ${bgColor.b})`);
     
-    // Step 2: Create initial mask based on color difference from background
+    // Step 2: Ultra-precise color-based mask creation
     const mask = new Uint8Array(width * height);
-    const bgThreshold = 20; // Even more precise tolerance for cleaner edges
+    const bgThreshold = 15; // Ultra-tight tolerance for clean edges
     
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -237,10 +240,14 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
         const g = data[pixelIdx + 1];
         const b = data[pixelIdx + 2];
         
-        // Calculate color difference from background
-        const colorDiff = Math.abs(r - bgColor.r) + Math.abs(g - bgColor.g) + Math.abs(b - bgColor.b);
+        // Enhanced color difference calculation
+        const colorDiff = Math.sqrt(
+          Math.pow(r - bgColor.r, 2) + 
+          Math.pow(g - bgColor.g, 2) + 
+          Math.pow(b - bgColor.b, 2)
+        );
         
-        // If color is significantly different from background, it's foreground
+        // More aggressive thresholding for cleaner edges
         if (colorDiff > bgThreshold) {
           mask[idx] = 255; // Keep
         } else {
@@ -249,47 +256,36 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
       }
     }
     
-    // Step 3: Refine mask with edge detection for precise borders
+    // Step 3: Advanced edge detection and refinement
     const refinedMask = new Uint8Array(mask.length);
     
-    for (let y = 1; y < height - 1; y++) {
-      for (let x = 1; x < width - 1; x++) {
+    for (let y = 2; y < height - 2; y++) {
+      for (let x = 2; x < width - 2; x++) {
         const idx = y * width + x;
-        const pixelIdx = idx * 4;
         
-        const r = data[pixelIdx];
-        const g = data[pixelIdx + 1];
-        const b = data[pixelIdx + 2];
-        
-        // Calculate gradient strength (Sobel operator)
-        let gx = 0, gy = 0;
-        
-        // Sobel X kernel
-        const sobelX = [[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]];
-        const sobelY = [[-1, -2, -1], [0, 0, 0], [1, 2, 1]];
+        // Calculate Laplacian for edge detection
+        let laplacian = 0;
+        const kernel = [
+          [0, -1, 0],
+          [-1, 4, -1],
+          [0, -1, 0]
+        ];
         
         for (let ky = -1; ky <= 1; ky++) {
           for (let kx = -1; kx <= 1; kx++) {
             const ny = y + ky;
             const nx = x + kx;
-            if (ny >= 0 && ny < height && nx >= 0 && nx < width) {
-              const nIdx = (ny * width + nx) * 4;
-              const intensity = (data[nIdx] + data[nIdx + 1] + data[nIdx + 2]) / 3;
-              
-              gx += intensity * sobelX[ky + 1][kx + 1];
-              gy += intensity * sobelY[ky + 1][kx + 1];
-            }
+            const nIdx = (ny * width + nx) * 4;
+            const intensity = (data[nIdx] + data[nIdx + 1] + data[nIdx + 2]) / 3;
+            laplacian += intensity * kernel[ky + 1][kx + 1];
           }
         }
         
-        const gradient = Math.sqrt(gx * gx + gy * gy);
-        
-        // Combine original mask with edge information
         const originalMask = mask[idx];
-        const edgeStrength = Math.min(gradient / 50, 1); // Normalize gradient
+        const edgeStrength = Math.abs(laplacian);
         
-        // If there's a strong edge, likely part of the subject
-        if (gradient > 12 || originalMask > 0) { // Ultra-sensitive edge detection for precise borders
+        // Aggressive edge-based refinement
+        if (edgeStrength > 8 || originalMask > 0) {
           refinedMask[idx] = 255;
         } else {
           refinedMask[idx] = 0;
@@ -297,31 +293,49 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
       }
     }
     
-    // Step 4: Morphological operations to clean up the mask
-    const cleanMask = new Uint8Array(refinedMask.length);
-    const kernelSize = 1;
+    // Step 4: Eliminate whitish borders with aggressive edge erosion
+    const borderCleanMask = new Uint8Array(refinedMask.length);
     
-    // Closing operation (dilation followed by erosion)
-    // Dilation first
-    for (let y = kernelSize; y < height - kernelSize; y++) {
-      for (let x = kernelSize; x < width - kernelSize; x++) {
+    for (let y = 1; y < height - 1; y++) {
+      for (let x = 1; x < width - 1; x++) {
         const idx = y * width + x;
-        let maxVal = 0;
         
-        for (let ky = -kernelSize; ky <= kernelSize; ky++) {
-          for (let kx = -kernelSize; kx <= kernelSize; kx++) {
-            const nIdx = (y + ky) * width + (x + kx);
-            if (nIdx >= 0 && nIdx < refinedMask.length) {
-              maxVal = Math.max(maxVal, refinedMask[nIdx]);
+        if (refinedMask[idx] > 0) {
+          // Check if all neighbors are also foreground
+          let solidNeighbors = 0;
+          let totalNeighbors = 0;
+          
+          for (let ky = -1; ky <= 1; ky++) {
+            for (let kx = -1; kx <= 1; kx++) {
+              if (ky === 0 && kx === 0) continue;
+              const nIdx = (y + ky) * width + (x + kx);
+              if (nIdx >= 0 && nIdx < refinedMask.length) {
+                if (refinedMask[nIdx] > 0) solidNeighbors++;
+                totalNeighbors++;
+              }
             }
           }
+          
+          // Only keep pixels that have strong neighbor support
+          const neighborRatio = solidNeighbors / totalNeighbors;
+          if (neighborRatio > 0.6) {
+            borderCleanMask[idx] = 255;
+          } else {
+            borderCleanMask[idx] = 0;
+          }
+        } else {
+          borderCleanMask[idx] = 0;
         }
-        cleanMask[idx] = maxVal;
       }
     }
     
+    // Step 5: Final morphological cleaning to remove artifacts
+    const finalMask = new Uint8Array(borderCleanMask.length);
+    
+    // Opening operation (erosion followed by dilation) to remove noise
+    const kernelSize = 1;
+    
     // Erosion
-    const finalMask = new Uint8Array(cleanMask.length);
     for (let y = kernelSize; y < height - kernelSize; y++) {
       for (let x = kernelSize; x < width - kernelSize; x++) {
         const idx = y * width + x;
@@ -330,8 +344,8 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
         for (let ky = -kernelSize; ky <= kernelSize; ky++) {
           for (let kx = -kernelSize; kx <= kernelSize; kx++) {
             const nIdx = (y + ky) * width + (x + kx);
-            if (nIdx >= 0 && nIdx < cleanMask.length) {
-              minVal = Math.min(minVal, cleanMask[nIdx]);
+            if (nIdx >= 0 && nIdx < borderCleanMask.length) {
+              minVal = Math.min(minVal, borderCleanMask[nIdx]);
             }
           }
         }
@@ -339,37 +353,30 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
       }
     }
     
-    // Step 5: Apply anti-aliasing to smooth edges
-    for (let y = 1; y < height - 1; y++) {
-      for (let x = 1; x < width - 1; x++) {
+    // Dilation to restore size
+    const restoredMask = new Uint8Array(finalMask.length);
+    for (let y = kernelSize; y < height - kernelSize; y++) {
+      for (let x = kernelSize; x < width - kernelSize; x++) {
         const idx = y * width + x;
+        let maxVal = 0;
         
-        if (finalMask[idx] === 0) {
-          // Check if this is near a foreground pixel
-          let neighborSum = 0;
-          let neighborCount = 0;
-          
-          for (let ky = -1; ky <= 1; ky++) {
-            for (let kx = -1; kx <= 1; kx++) {
-              const nIdx = (y + ky) * width + (x + kx);
-              if (nIdx >= 0 && nIdx < finalMask.length) {
-                neighborSum += finalMask[nIdx];
-                neighborCount++;
-              }
+        for (let ky = -kernelSize; ky <= kernelSize; ky++) {
+          for (let kx = -kernelSize; kx <= kernelSize; kx++) {
+            const nIdx = (y + ky) * width + (x + kx);
+            if (nIdx >= 0 && nIdx < finalMask.length) {
+              maxVal = Math.max(maxVal, finalMask[nIdx]);
             }
           }
-          
-          const avgNeighbor = neighborSum / neighborCount;
-          if (avgNeighbor > 128) {
-            finalMask[idx] = Math.floor(avgNeighbor * 0.3); // Smooth transition
-          }
         }
+        restoredMask[idx] = maxVal;
       }
     }
     
-    // Step 6: Apply the final mask
-    for (let i = 0; i < finalMask.length; i++) {
-      data[i * 4 + 3] = finalMask[i]; // Set alpha channel
+    // Step 6: Apply the ultra-clean mask (no anti-aliasing to prevent borders)
+    for (let i = 0; i < restoredMask.length; i++) {
+      const alpha = restoredMask[i];
+      // Binary alpha - either fully transparent or fully opaque
+      data[i * 4 + 3] = alpha > 128 ? 255 : 0;
     }
     
     // Create output
@@ -385,7 +392,7 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
       outputCanvas.toBlob(
         (blob) => {
           if (blob) {
-            console.log('Advanced background removal completed successfully');
+            console.log('Professional background removal with pixel-perfect edges completed');
             resolve(blob);
           } else {
             reject(new Error('Failed to create blob'));
@@ -397,7 +404,7 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     });
     
   } catch (error) {
-    console.error('Error in background removal:', error);
+    console.error('Error in professional background removal:', error);
     throw error;
   }
 };
