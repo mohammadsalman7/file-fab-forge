@@ -4,6 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import BackgroundRemoverPage from "./pages/BackgroundRemover";
+import ImageUpscalerPage from "./pages/ImageUpscaler";
+import DocumentConverterPage from "./pages/DocumentConverter";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -16,6 +19,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/background-remover" element={<BackgroundRemoverPage />} />
+          <Route path="/image-upscaler" element={<ImageUpscalerPage />} />
+          <Route path="/document-converter" element={<DocumentConverterPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
