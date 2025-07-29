@@ -185,7 +185,7 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     
     // Step 1: Detect background color (most common color around edges)
     const backgroundColors = new Map();
-    const sampleSize = 10; // Sample every 10th pixel on edges
+    const sampleSize = 5; // More frequent sampling for better detection
     
     // Sample top and bottom edges
     for (let x = 0; x < width; x += sampleSize) {
@@ -226,7 +226,7 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     
     // Step 2: Create initial mask based on color difference from background
     const mask = new Uint8Array(width * height);
-    const bgThreshold = 25; // More precise tolerance for background color matching
+    const bgThreshold = 20; // Even more precise tolerance for cleaner edges
     
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -289,7 +289,7 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
         const edgeStrength = Math.min(gradient / 50, 1); // Normalize gradient
         
         // If there's a strong edge, likely part of the subject
-        if (gradient > 15 || originalMask > 0) { // More sensitive edge detection
+        if (gradient > 12 || originalMask > 0) { // Ultra-sensitive edge detection for precise borders
           refinedMask[idx] = 255;
         } else {
           refinedMask[idx] = 0;
@@ -408,5 +408,112 @@ export const loadImage = (file: Blob): Promise<HTMLImageElement> => {
     img.onload = () => resolve(img);
     img.onerror = reject;
     img.src = URL.createObjectURL(file);
+  });
+};
+
+// Add custom background to transparent image
+export const addCustomBackground = async (
+  transparentImage: HTMLImageElement, 
+  backgroundImage: HTMLImageElement | string
+): Promise<Blob> => {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Could not get canvas context');
+
+  canvas.width = transparentImage.naturalWidth;
+  canvas.height = transparentImage.naturalHeight;
+
+  // Draw background
+  if (typeof backgroundImage === 'string') {
+    // Solid color background
+    ctx.fillStyle = backgroundImage;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  } else {
+    // Image background
+    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+  }
+
+  // Draw transparent image on top
+  ctx.drawImage(transparentImage, 0, 0);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error('Failed to create blob'));
+      },
+      'image/png',
+      1.0
+    );
+  });
+};
+
+// Add blur background effect
+export const addBlurBackground = async (
+  transparentImage: HTMLImageElement,
+  blurRadius: number = 10
+): Promise<Blob> => {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Could not get canvas context');
+
+  canvas.width = transparentImage.naturalWidth;
+  canvas.height = transparentImage.naturalHeight;
+
+  // Create blurred background from the original image
+  ctx.filter = `blur(${blurRadius}px)`;
+  ctx.drawImage(transparentImage, 0, 0);
+  
+  // Reset filter and draw sharp image on top
+  ctx.filter = 'none';
+  ctx.drawImage(transparentImage, 0, 0);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error('Failed to create blob'));
+      },
+      'image/png',
+      1.0
+    );
+  });
+};
+
+// Add shadow effect to image
+export const addShadowEffect = async (
+  transparentImage: HTMLImageElement,
+  shadowColor: string = 'rgba(0,0,0,0.3)',
+  offsetX: number = 10,
+  offsetY: number = 10,
+  blur: number = 15
+): Promise<Blob> => {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('Could not get canvas context');
+
+  canvas.width = transparentImage.naturalWidth + Math.abs(offsetX) + blur;
+  canvas.height = transparentImage.naturalHeight + Math.abs(offsetY) + blur;
+
+  // Draw shadow
+  ctx.shadowColor = shadowColor;
+  ctx.shadowOffsetX = offsetX;
+  ctx.shadowOffsetY = offsetY;
+  ctx.shadowBlur = blur;
+  
+  const x = offsetX < 0 ? Math.abs(offsetX) + blur / 2 : blur / 2;
+  const y = offsetY < 0 ? Math.abs(offsetY) + blur / 2 : blur / 2;
+  
+  ctx.drawImage(transparentImage, x, y);
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error('Failed to create blob'));
+      },
+      'image/png',
+      1.0
+    );
   });
 };
