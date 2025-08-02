@@ -2,10 +2,12 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BackgroundRemover } from '@/components/tools/BackgroundRemover';
+import Layout from '@/components/layout/Layout';
 
 const BackgroundRemoverPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-secondary">
+    <Layout>
+      <div className="min-h-screen bg-gradient-secondary">
       {/* Header */}
       <div className="bg-gradient-primary">
         <div className="container mx-auto px-6 py-8">
@@ -36,6 +38,7 @@ const BackgroundRemoverPage = () => {
         </div>
       </div>
     </div>
+    </Layout>
   );
 };
 

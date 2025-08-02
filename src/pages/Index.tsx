@@ -2,10 +2,12 @@ import { Scissors, Maximize2, FileText, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Layout from '@/components/layout/Layout';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-secondary">
+    <Layout>
+      <div className="min-h-screen bg-gradient-secondary">
       {/* Header */}
       <div className="relative overflow-hidden bg-gradient-primary">
         <div className="container mx-auto px-6 py-16 text-center">
@@ -112,18 +114,36 @@ const Index = () => {
               </Link>
             </CardContent>
           </Card>
-        </div>
-      </div>
 
-      {/* Footer */}
-      <div className="bg-gradient-secondary border-t border-border/20">
-        <div className="container mx-auto px-6 py-8 text-center">
-          <p className="text-muted-foreground">
-            Built with cutting-edge AI technology for professional results
-          </p>
+          {/* Document Generator */}
+          <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">Document Generator</CardTitle>
+                  <CardDescription>Create professional documents</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Generate offer letters, NDAs, internship letters, and relieving letters with custom headers and content.
+              </p>
+              <Link to="/document-generator">
+                <Button className="w-full group-hover:bg-primary/90 transition-colors">
+                  Get Started
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
+    </Layout>
   );
 };
 

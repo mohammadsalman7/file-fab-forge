@@ -2,10 +2,12 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DocumentConverter } from '@/components/tools/DocumentConverter';
+import Layout from '@/components/layout/Layout';
 
 const DocumentConverterPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-secondary">
+    <Layout>
+      <div className="min-h-screen bg-gradient-secondary">
       {/* Header */}
       <div className="bg-gradient-primary">
         <div className="container mx-auto px-6 py-8">
@@ -36,6 +38,7 @@ const DocumentConverterPage = () => {
         </div>
       </div>
     </div>
+    </Layout>
   );
 };
 
