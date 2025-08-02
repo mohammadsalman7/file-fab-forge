@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Upload, Download, Loader2, Edit3 } from 'lucide-react';
+import { Upload, Download, Loader2, Edit3, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ToolCard } from '@/components/ToolCard';
 import { FileDropzone } from '@/components/FileDropzone';
 import { BeforeAfterComparison } from './BeforeAfterComparison';
 import { ManualEditor } from './ManualEditor';
+import { BackgroundCustomizer } from './BackgroundCustomizer';
 import { removeBackground, loadImage } from '@/utils/advancedBackgroundRemoval';
 import { toast } from 'sonner';
 
@@ -13,17 +14,21 @@ export const BackgroundRemover = () => {
   const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
   const [finalImage, setFinalImage] = useState<string | null>(null);
+  const [customBackground, setCustomBackground] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showManualEditor, setShowManualEditor] = useState(false);
+  const [showBackgroundCustomizer, setShowBackgroundCustomizer] = useState(false);
 
   const handleFileSelect = (file: File) => {
     setOriginalFile(file);
     setOriginalImageUrl(URL.createObjectURL(file));
     setProcessedImage(null);
     setFinalImage(null);
+    setCustomBackground(null);
     setProgress(0);
     setShowManualEditor(false);
+    setShowBackgroundCustomizer(false);
   };
 
   const handleRemoveBackground = async () => {
@@ -64,8 +69,14 @@ export const BackgroundRemover = () => {
     toast.success('Manual edits applied successfully!');
   };
 
+  const handleCustomBackground = (backgroundBlob: Blob) => {
+    const imageUrl = URL.createObjectURL(backgroundBlob);
+    setCustomBackground(imageUrl);
+    toast.success('Background applied successfully!');
+  };
+
   const handleDownload = (filename: string) => {
-    const imageToDownload = finalImage || processedImage;
+    const imageToDownload = customBackground || finalImage || processedImage;
     if (!imageToDownload) return;
 
     const link = document.createElement('a');
@@ -141,11 +152,11 @@ export const BackgroundRemover = () => {
             )}
 
             {/* Before/After Comparison */}
-            {originalImageUrl && processedImage && !showManualEditor && (
+            {originalImageUrl && processedImage && !showManualEditor && !showBackgroundCustomizer && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="font-medium">Before & After Comparison</h3>
-                  <div className="flex space-x-2">
+                  <div className="flex flex-wrap gap-2">
                     <Button
                       variant="outline"
                       size="sm"
@@ -153,6 +164,14 @@ export const BackgroundRemover = () => {
                     >
                       <Edit3 className="h-4 w-4 mr-2" />
                       Manual Edit
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowBackgroundCustomizer(true)}
+                    >
+                      <Palette className="h-4 w-4 mr-2" />
+                      Custom Background
                     </Button>
                     <Button
                       onClick={() => handleDownload(`background-removed-${Date.now()}.png`)}
@@ -166,7 +185,7 @@ export const BackgroundRemover = () => {
                 
                 <BeforeAfterComparison
                   beforeImage={originalImageUrl}
-                  afterImage={finalImage || processedImage}
+                  afterImage={customBackground || finalImage || processedImage}
                 />
               </div>
             )}
@@ -192,6 +211,26 @@ export const BackgroundRemover = () => {
               </div>
             )}
 
+            {/* Background Customizer */}
+            {showBackgroundCustomizer && processedImage && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium">Background Customizer</h3>
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowBackgroundCustomizer(false)}
+                  >
+                    Back to Comparison
+                  </Button>
+                </div>
+                
+                <BackgroundCustomizer
+                  transparentImage={finalImage || processedImage}
+                  onCustomBackground={handleCustomBackground}
+                />
+              </div>
+            )}
+
             {/* Start Over */}
             <div className="text-center">
               <button
@@ -200,8 +239,10 @@ export const BackgroundRemover = () => {
                   setOriginalImageUrl(null);
                   setProcessedImage(null);
                   setFinalImage(null);
+                  setCustomBackground(null);
                   setProgress(0);
                   setShowManualEditor(false);
+                  setShowBackgroundCustomizer(false);
                 }}
                 className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >

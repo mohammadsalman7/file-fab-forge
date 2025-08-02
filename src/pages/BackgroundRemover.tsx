@@ -33,8 +33,27 @@ const BackgroundRemoverPage = () => {
 
       {/* Tool */}
       <div className="container mx-auto px-6 py-16">
-        <div className="max-w-4xl mx-auto">
-          <BackgroundRemover />
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          {/* Ad Space Left */}
+          <div className="hidden lg:block">
+            <div className="sticky top-24 bg-muted/20 border border-dashed border-muted-foreground/20 rounded-lg p-6 text-center h-96">
+              <div className="text-muted-foreground text-sm">Ad Space</div>
+              <div className="text-xs text-muted-foreground/60 mt-2">300x250</div>
+            </div>
+          </div>
+
+          {/* Main Tool */}
+          <div className="lg:col-span-2">
+            <BackgroundRemover />
+          </div>
+
+          {/* Ad Space Right */}
+          <div className="hidden lg:block">
+            <div className="sticky top-24 bg-muted/20 border border-dashed border-muted-foreground/20 rounded-lg p-6 text-center h-96">
+              <div className="text-muted-foreground text-sm">Ad Space</div>
+              <div className="text-xs text-muted-foreground/60 mt-2">300x250</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
