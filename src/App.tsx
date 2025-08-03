@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import BackgroundRemoverPage from "./pages/BackgroundRemover";
 import ImageUpscalerPage from "./pages/ImageUpscaler";
 import DocumentConverterPage from "./pages/DocumentConverter";
+import FAQPage from "./pages/FAQ";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/background-remover" element={<BackgroundRemoverPage />} />
           <Route path="/image-upscaler" element={<ImageUpscalerPage />} />
           <Route path="/document-converter" element={<DocumentConverterPage />} />
+          <Route path="/faq" element={<FAQPage />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/cookies" element={<Cookies />} />

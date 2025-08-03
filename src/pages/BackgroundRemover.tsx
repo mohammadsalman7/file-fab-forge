@@ -2,7 +2,57 @@ import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { BackgroundRemover } from '@/components/tools/BackgroundRemover';
+import { FAQ } from '@/components/FAQ';
+import { Testimonials } from '@/components/Testimonials';
 import Layout from '@/components/layout/Layout';
+
+const backgroundRemoverFAQs = [
+  {
+    question: "What is the Background Remover tool?",
+    answer: "The Background Remover tool allows you to remove the background from any image automatically using AI."
+  },
+  {
+    question: "What image formats are supported?",
+    answer: "We support JPG, PNG, and WEBP formats."
+  },
+  {
+    question: "Is there a size limit for image uploads?",
+    answer: "Yes, typically we allow images up to 10MB in size."
+  },
+  {
+    question: "Will the quality of my image be affected?",
+    answer: "No, our tool preserves the original image quality after background removal."
+  },
+  {
+    question: "Can I use the output images for commercial use?",
+    answer: "Yes, you can use the images commercially as long as you own the rights to the original photo."
+  },
+  {
+    question: "Do you store my uploaded images?",
+    answer: "No, we don't store any images. All files are deleted after processing for your privacy."
+  }
+];
+
+const backgroundRemoverTestimonials = [
+  {
+    name: "Sarah Johnson",
+    role: "E-commerce Manager",
+    content: "This tool saved me hours of work! Perfect for product photos.",
+    rating: 5
+  },
+  {
+    name: "Mike Chen",
+    role: "Graphic Designer",
+    content: "Amazing quality and so easy to use. My go-to tool now.",
+    rating: 5
+  },
+  {
+    name: "Lisa Rodriguez",
+    role: "Social Media Manager",
+    content: "Perfect for creating content. The AI is incredibly accurate.",
+    rating: 4
+  }
+];
 
 const BackgroundRemoverPage = () => {
   return (
