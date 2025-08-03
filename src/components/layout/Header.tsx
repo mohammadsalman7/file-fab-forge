@@ -13,7 +13,6 @@ const Header = () => {
     { name: 'Background Remover', href: '/background-remover' },
     { name: 'Image Upscaler', href: '/image-upscaler' },
     { name: 'Document Converter', href: '/document-converter' },
-    { name: 'Document Generator', href: '/document-generator' },
   ];
 
   return (
@@ -21,11 +20,8 @@ const Header = () => {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <img src={logo} alt="RemoveBackground" className="h-8 w-8" />
-            <span className="text-lg font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              RemoveBackground
-            </span>
+          <Link to="/" className="flex items-center">
+            <img src="/lovable-uploads/4797c19b-882c-40ac-8c72-3df894830230.png" alt="Remove" className="h-12 w-auto" />
           </Link>
 
           {/* Desktop Navigation */}

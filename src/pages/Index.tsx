@@ -115,31 +115,6 @@ const Index = () => {
             </CardContent>
           </Card>
 
-          {/* Document Generator */}
-          <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
-            <CardHeader>
-              <div className="flex items-center space-x-3">
-                <div className="p-2 rounded-lg bg-primary/10">
-                  <FileText className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl">Document Generator</CardTitle>
-                  <CardDescription>Create professional documents</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
-                Generate offer letters, NDAs, internship letters, and relieving letters with custom headers and content.
-              </p>
-              <Link to="/document-generator">
-                <Button className="w-full group-hover:bg-primary/90 transition-colors">
-                  Get Started
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

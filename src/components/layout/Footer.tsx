@@ -9,12 +9,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <img src={logo} alt="RemoveBackground" className="h-8 w-8" />
-              <span className="text-xl font-bold">RemoveBackground</span>
+            <div className="flex items-center">
+              <img src="/lovable-uploads/4797c19b-882c-40ac-8c72-3df894830230.png" alt="Remove" className="h-10 w-auto" />
             </div>
             <p className="text-sm text-muted-foreground">
-              Professional AI-powered tools for image processing and document generation. 
+              Professional AI-powered tools for image processing and file conversion. 
               Transform your files with ease.
             </p>
           </div>
@@ -26,18 +25,16 @@ const Footer = () => {
               <li><Link to="/background-remover" className="hover:text-primary transition-colors">Background Remover</Link></li>
               <li><Link to="/image-upscaler" className="hover:text-primary transition-colors">Image Upscaler</Link></li>
               <li><Link to="/document-converter" className="hover:text-primary transition-colors">Document Converter</Link></li>
-              <li><Link to="/document-generator" className="hover:text-primary transition-colors">Document Generator</Link></li>
             </ul>
           </div>
 
-          {/* Documents */}
+          {/* Support */}
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold">Document Templates</h3>
+            <h3 className="text-sm font-semibold">Support</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link to="/document-generator?type=offer-letter" className="hover:text-primary transition-colors">Offer Letter</Link></li>
-              <li><Link to="/document-generator?type=nda" className="hover:text-primary transition-colors">NDA</Link></li>
-              <li><Link to="/document-generator?type=internship-letter" className="hover:text-primary transition-colors">Internship Letter</Link></li>
-              <li><Link to="/document-generator?type=relieving-letter" className="hover:text-primary transition-colors">Relieving Letter</Link></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Contact Us</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">FAQ</a></li>
             </ul>
           </div>
 
@@ -48,7 +45,6 @@ const Footer = () => {
               <li><Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link></li>
               <li><Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
               <li><Link to="/cookies" className="hover:text-primary transition-colors">Cookie Policy</Link></li>
-              <li><Link to="/imprint" className="hover:text-primary transition-colors">Imprint</Link></li>
             </ul>
           </div>
         </div>
@@ -74,7 +70,7 @@ const Footer = () => {
           </div>
           
           <p className="text-sm text-muted-foreground">
-            © 2024 RemoveBackground. All rights reserved.
+            © 2024 Remove. All rights reserved.
           </p>
         </div>
       </div>

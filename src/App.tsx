@@ -7,7 +7,9 @@ import Index from "./pages/Index";
 import BackgroundRemoverPage from "./pages/BackgroundRemover";
 import ImageUpscalerPage from "./pages/ImageUpscaler";
 import DocumentConverterPage from "./pages/DocumentConverter";
-import DocumentGeneratorPage from "./pages/DocumentGeneratorPage";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Cookies from "./pages/Cookies";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,7 +25,9 @@ const App = () => (
           <Route path="/background-remover" element={<BackgroundRemoverPage />} />
           <Route path="/image-upscaler" element={<ImageUpscalerPage />} />
           <Route path="/document-converter" element={<DocumentConverterPage />} />
-          <Route path="/document-generator" element={<DocumentGeneratorPage />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/cookies" element={<Cookies />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
