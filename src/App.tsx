@@ -11,6 +11,9 @@ import FAQPage from "./pages/FAQ";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Cookies from "./pages/Cookies";
+import Support from "./pages/Support";
+import HelpCenter from "./pages/HelpCenter";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +30,9 @@ const App = () => (
           <Route path="/image-upscaler" element={<ImageUpscalerPage />} />
           <Route path="/document-converter" element={<DocumentConverterPage />} />
           <Route path="/faq" element={<FAQPage />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/help-center" element={<HelpCenter />} />
+          <Route path="/contact" element={<Contact />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/cookies" element={<Cookies />} />

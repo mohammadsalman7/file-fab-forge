@@ -24,18 +24,6 @@ const generalFAQs = [
   {
     question: "Can I use these tools on mobile?",
     answer: "Yes, all our tools are mobile-friendly and work on Android and iOS browsers."
-  },
-  {
-    question: "How secure are my files?",
-    answer: "We take security seriously. All files are processed securely and automatically deleted after processing to protect your privacy."
-  },
-  {
-    question: "What browsers are supported?",
-    answer: "Our tools work on all modern browsers including Chrome, Firefox, Safari, and Edge."
-  },
-  {
-    question: "Can I use the processed images commercially?",
-    answer: "Yes, you can use the processed images commercially as long as you own the rights to the original content."
   }
 ];
 

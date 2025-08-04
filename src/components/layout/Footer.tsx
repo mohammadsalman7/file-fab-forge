@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center">
-              <img src="/lovable-uploads/4797c19b-882c-40ac-8c72-3df894830230.png" alt="Remove" className="h-10 w-auto" />
+              <img src="/lovable-uploads/4797c19b-882c-40ac-8c72-3df894830230.png" alt="Logo" className="h-16 w-auto" />
             </div>
             <p className="text-sm text-muted-foreground">
               Professional AI-powered tools for image processing and file conversion. 
@@ -32,9 +32,10 @@ const Footer = () => {
           <div className="space-y-4">
             <h3 className="text-sm font-semibold">Support</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/support" className="hover:text-primary transition-colors">Support</Link></li>
+              <li><Link to="/help-center" className="hover:text-primary transition-colors">Help Center</Link></li>
+              <li><Link to="/contact" className="hover:text-primary transition-colors">Contact Us</Link></li>
               <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Contact Us</a></li>
             </ul>
           </div>
 

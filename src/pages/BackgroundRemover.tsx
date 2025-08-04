@@ -106,6 +106,20 @@ const BackgroundRemoverPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Testimonials Section */}
+      <div className="container mx-auto px-6 py-16 bg-background/50">
+        <div className="max-w-6xl mx-auto">
+          <Testimonials testimonials={backgroundRemoverTestimonials} />
+        </div>
+      </div>
+
+      {/* FAQ Section */}
+      <div className="container mx-auto px-6 py-16">
+        <div className="max-w-4xl mx-auto">
+          <FAQ title="Background Remover FAQ" items={backgroundRemoverFAQs} />
+        </div>
+      </div>
     </div>
     </Layout>
   );
