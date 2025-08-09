@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center">
-              <img src="/lovable-uploads/4797c19b-882c-40ac-8c72-3df894830230.png" alt="Logo" className="h-20 w-auto" />
+              <img src="/lovable-uploads/d6e67793-e22c-4362-a794-c59496780b93.png" alt="Remove Background Logo" className="h-24 w-auto" />
             </div>
             <p className="text-sm text-muted-foreground">
               Professional AI-powered tools for image processing and file conversion. 

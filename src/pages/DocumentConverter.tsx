@@ -71,11 +71,10 @@ const DocumentConverterPage = () => {
           </div>
           <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-8 shadow-glass border border-white/20">
             <h1 className="text-4xl font-bold mb-4 text-white">
-              Document Converter
+              Convert Any File to Any Format — Instantly!
             </h1>
             <p className="text-lg text-white/90 max-w-2xl">
-              Convert your documents between different formats with ease. Support for PDF, Word, 
-              images, and more with high-quality output.
+              Our document converter supports a wide range of formats, letting you transform your files in seconds. Whether it's Word to PDF, DOC/DOCX to Excel or JPG, Excel to PDF, PDF to Word/Excel/JPG/PNG, or JPG to PDF/Word/PNG/JPEG — we've got you covered. Fast, secure, and easy to use — just upload your file and get your desired format in one click.
             </p>
           </div>
         </div>
