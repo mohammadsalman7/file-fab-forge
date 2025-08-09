@@ -66,13 +66,13 @@ const Footer = () => {
             <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Youtube className="h-5 w-5" />
             </a>
-            <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="https://www.linkedin.com/company/removerbackground" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Linkedin className="h-5 w-5" />
             </a>
           </div>
           
           <p className="text-sm text-muted-foreground">
-            © 2024 Remove. All rights reserved.
+            © 2024 RemoverBackground. All rights reserved.
           </p>
         </div>
       </div>
