@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import BackgroundRemoverPage from "./pages/BackgroundRemover";
 import ImageUpscalerPage from "./pages/ImageUpscaler";
 import DocumentConverterPage from "./pages/DocumentConverter";
+import FileCompressorPage from "./pages/FileCompressor";
 import FAQPage from "./pages/FAQ";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/background-remover" element={<BackgroundRemoverPage />} />
           <Route path="/image-upscaler" element={<ImageUpscalerPage />} />
           <Route path="/document-converter" element={<DocumentConverterPage />} />
+          <Route path="/file-compressor" element={<FileCompressorPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/support" element={<Support />} />
           <Route path="/help-center" element={<HelpCenter />} />

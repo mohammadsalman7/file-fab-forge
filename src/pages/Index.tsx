@@ -1,4 +1,4 @@
-import { Scissors, Maximize2, FileText, ArrowRight } from 'lucide-react';
+import { Scissors, Maximize2, FileText, ArrowRight, Minimize2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,7 +19,7 @@ const Index = () => {
               Professional-grade tools for image processing and document conversion. 
               Remove backgrounds, upscale images, and convert files with AI-powered precision.
             </p>
-            <div className="flex justify-center space-x-8 text-white/80">
+            <div className="flex justify-center space-x-6 text-white/80 flex-wrap">
               <div className="flex items-center space-x-2">
                 <Scissors className="h-5 w-5" />
                 <span>AI Background Removal</span>
@@ -32,6 +32,10 @@ const Index = () => {
                 <FileText className="h-5 w-5" />
                 <span>Document Conversion</span>
               </div>
+              <div className="flex items-center space-x-2">
+                <Minimize2 className="h-5 w-5" />
+                <span>File Compression</span>
+              </div>
             </div>
           </div>
         </div>
@@ -39,7 +43,7 @@ const Index = () => {
 
       {/* Tools Grid */}
       <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center space-x-3">
@@ -107,6 +111,31 @@ const Index = () => {
                 Convert your documents between different formats with ease and high-quality output.
               </p>
               <Link to="/document-converter">
+                <Button className="w-full group-hover:bg-primary/90 transition-colors">
+                  Get Started
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Minimize2 className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">File Compressor</CardTitle>
+                  <CardDescription>Reduce file sizes efficiently</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Compress images, videos, documents, and audio files while maintaining quality.
+              </p>
+              <Link to="/file-compressor">
                 <Button className="w-full group-hover:bg-primary/90 transition-colors">
                   Get Started
                   <ArrowRight className="h-4 w-4 ml-2" />

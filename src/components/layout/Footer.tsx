@@ -25,6 +25,7 @@ const Footer = () => {
               <li><Link to="/background-remover" className="hover:text-primary transition-colors">Background Remover</Link></li>
               <li><Link to="/image-upscaler" className="hover:text-primary transition-colors">Image Upscaler</Link></li>
               <li><Link to="/document-converter" className="hover:text-primary transition-colors">Document Converter</Link></li>
+              <li><Link to="/file-compressor" className="hover:text-primary transition-colors">File Compressor</Link></li>
             </ul>
           </div>
 

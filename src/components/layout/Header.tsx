@@ -13,6 +13,7 @@ const Header = () => {
     { name: 'Background Remover', href: '/background-remover' },
     { name: 'Image Upscaler', href: '/image-upscaler' },
     { name: 'Document Converter', href: '/document-converter' },
+    { name: 'File Compressor', href: '/file-compressor' },
   ];
 
   return (
