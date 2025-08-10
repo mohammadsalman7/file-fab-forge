@@ -1,4 +1,4 @@
-import { Scissors, Maximize2, FileText, ArrowRight, Minimize2 } from 'lucide-react';
+import { Scissors, Maximize2, FileText, ArrowRight, Minimize2, Unlock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,7 +43,7 @@ const Index = () => {
 
       {/* Tools Grid */}
       <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
           <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center space-x-3">
@@ -136,6 +136,31 @@ const Index = () => {
                 Compress images, videos, documents, and audio files while maintaining quality.
               </p>
               <Link to="/file-compressor">
+                <Button className="w-full group-hover:bg-primary/90 transition-colors">
+                  Get Started
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Unlock className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">PDF Password Remover</CardTitle>
+                  <CardDescription>Remove PDF protection instantly</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Remove password protection from PDF files quickly and securely with our advanced tool.
+              </p>
+              <Link to="/pdf-password-remover">
                 <Button className="w-full group-hover:bg-primary/90 transition-colors">
                   Get Started
                   <ArrowRight className="h-4 w-4 ml-2" />

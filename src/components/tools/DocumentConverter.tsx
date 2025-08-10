@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { FileText, Download } from 'lucide-react';
 import { FileDropzone } from '@/components/FileDropzone';
 import { ToolCard } from '@/components/ToolCard';
@@ -29,7 +29,7 @@ export const DocumentConverter = () => {
     }
   };
 
-  const handleConvertToPdf = async () => {
+  const handleConvertToPdf = useCallback(async () => {
     if (!originalFile) return;
 
     setIsProcessing(true);
@@ -67,7 +67,7 @@ export const DocumentConverter = () => {
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [originalFile]);
 
   const handleConvertToDocx = async () => {
     if (!originalFile) return;
@@ -179,8 +179,7 @@ export const DocumentConverter = () => {
     URL.revokeObjectURL(url);
   };
 
-  const getAcceptedTypes = () => {
-    return [
+  const getAcceptedTypes = useMemo(() => [
       'image/*', 
       'application/pdf', 
       'text/plain',
@@ -194,8 +193,7 @@ export const DocumentConverter = () => {
       'image/svg+xml',
       '.doc',
       '.docx'
-    ];
-  };
+    ], []);
 
   return (
     <ToolCard
@@ -207,7 +205,7 @@ export const DocumentConverter = () => {
         {!originalFile ? (
           <FileDropzone
             onFileSelect={handleFileSelect}
-            acceptedTypes={getAcceptedTypes()}
+            acceptedTypes={getAcceptedTypes}
             title="Drop your file here"
             description="Supports DOC, DOCX, PDF, images, Excel (XLSX/XLS), CSV, SVG, and text files"
             maxSize={50 * 1024 * 1024} // 50MB

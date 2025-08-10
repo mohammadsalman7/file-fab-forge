@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Minimize2, Download } from 'lucide-react';
 import { FileDropzone } from '@/components/FileDropzone';
 import { ToolCard } from '@/components/ToolCard';
@@ -21,27 +21,44 @@ export const FileCompressor = () => {
     setCompressedSize(0);
   };
 
-  const compressImage = async (file: File, quality: number): Promise<Blob> => {
-    return new Promise((resolve) => {
+  const compressImage = useCallback(async (file: File, quality: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d')!;
       const img = new Image();
       
       img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
+        // Optimize canvas dimensions for faster processing
+        const maxDimension = 4096; // Limit max dimension for performance
+        let { width, height } = img;
+        
+        if (width > maxDimension || height > maxDimension) {
+          const ratio = Math.min(maxDimension / width, maxDimension / height);
+          width *= ratio;
+          height *= ratio;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Use faster rendering with lower quality for better performance
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(img, 0, 0, width, height);
         
         canvas.toBlob(
-          (blob) => resolve(blob!),
+          (blob) => blob ? resolve(blob) : reject(new Error('Compression failed')),
           file.type,
           quality / 100
         );
+        
+        // Cleanup
+        URL.revokeObjectURL(img.src);
       };
       
+      img.onerror = () => reject(new Error('Failed to load image'));
       img.src = URL.createObjectURL(file);
     });
-  };
+  }, []);
 
   const compressVideo = async (file: File): Promise<Blob> => {
     // Simulate video compression by reducing file size
@@ -78,7 +95,7 @@ export const FileCompressor = () => {
     return new Blob([arrayBuffer], { type: file.type });
   };
 
-  const handleCompress = async () => {
+  const handleCompress = useCallback(async () => {
     if (!originalFile) return;
 
     setIsProcessing(true);
@@ -126,7 +143,7 @@ export const FileCompressor = () => {
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [originalFile, compressionLevel, compressImage]);
 
   const handleDownload = () => {
     if (!compressedFile || !originalFile) return;
@@ -145,8 +162,7 @@ export const FileCompressor = () => {
     URL.revokeObjectURL(url);
   };
 
-  const getAcceptedTypes = () => {
-    return [
+  const getAcceptedTypes = useMemo(() => [
       'image/*',
       'video/*',
       'audio/*',
@@ -168,8 +184,7 @@ export const FileCompressor = () => {
       '.jpeg',
       '.png',
       '.webp'
-    ];
-  };
+    ], []);
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -194,7 +209,7 @@ export const FileCompressor = () => {
         {!originalFile ? (
           <FileDropzone
             onFileSelect={handleFileSelect}
-            acceptedTypes={getAcceptedTypes()}
+            acceptedTypes={getAcceptedTypes}
             title="Drop your file here"
             description="Supports images (JPG, PNG), videos (MP4), audio (MP3), documents (PDF, Word, Excel), and CSV files"
             maxSize={100 * 1024 * 1024} // 100MB
