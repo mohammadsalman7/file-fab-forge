@@ -13,7 +13,7 @@ const Index = () => {
         <div className="container mx-auto px-6 py-16 text-center">
           <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-8 shadow-glass border border-white/20">
             <h1 className="text-5xl font-bold mb-4 text-white">
-            ImageDocPro - Remove Background Online Free
+             ImageDocPro - Free Online Image Processing Tools
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
               Free online background remover, image upscaler, and file converter. Remove background from images online free with AI precision. 
