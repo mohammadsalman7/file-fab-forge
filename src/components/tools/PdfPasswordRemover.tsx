@@ -5,16 +5,17 @@ import { ToolCard } from '@/components/ToolCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { removePdfPassword, checkPdfPassword } from '@/utils/pdfPasswordRemover';
+import { removePdfPassword, checkPdfPassword, addPdfPassword } from '@/utils/pdfPasswordRemover';
 import { toast } from 'sonner';
 
 export const PdfPasswordRemover = () => {
   const [originalFile, setOriginalFile] = useState<File | null>(null);
-  const [unlockedFile, setUnlockedFile] = useState<Blob | null>(null);
+  const [processedFile, setProcessedFile] = useState<Blob | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [password, setPassword] = useState('');
   const [isPasswordRequired, setIsPasswordRequired] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+  const [mode, setMode] = useState<'remove' | 'add'>('remove');
 
   const handleFileSelect = async (file: File) => {
     if (file.type !== 'application/pdf') {
@@ -23,7 +24,7 @@ export const PdfPasswordRemover = () => {
     }
 
     setOriginalFile(file);
-    setUnlockedFile(null);
+    setProcessedFile(null);
     setPassword('');
     setIsPasswordRequired(false);
     setIsChecking(true);
@@ -31,11 +32,12 @@ export const PdfPasswordRemover = () => {
     try {
       const requiresPassword = await checkPdfPassword(file);
       setIsPasswordRequired(requiresPassword);
+      setMode(requiresPassword ? 'remove' : 'add');
       
       if (!requiresPassword) {
-        toast.info('This PDF is not password protected.');
+        toast.info('This PDF is not password protected. You can add password protection.');
       } else {
-        toast.info('This PDF requires a password to unlock.');
+        toast.info('This PDF is password protected. You can remove the password.');
       }
     } catch (error) {
       console.error('Error checking PDF:', error);
@@ -45,26 +47,32 @@ export const PdfPasswordRemover = () => {
     }
   };
 
-  const handleRemovePassword = async () => {
+  const handleProcessPassword = async () => {
     if (!originalFile) return;
 
-    if (isPasswordRequired && !password.trim()) {
-      toast.error('Please enter the PDF password.');
+    if (!password.trim()) {
+      toast.error(mode === 'remove' ? 'Please enter the current PDF password.' : 'Please enter a new password.');
       return;
     }
 
     setIsProcessing(true);
 
     try {
-      const result = await removePdfPassword(originalFile, password);
-      setUnlockedFile(result);
-      toast.success('PDF password removed successfully!');
+      let result: Blob;
+      if (mode === 'remove') {
+        result = await removePdfPassword(originalFile, password);
+        toast.success('PDF password removed successfully!');
+      } else {
+        result = await addPdfPassword(originalFile, password);
+        toast.success('PDF password added successfully!');
+      }
+      setProcessedFile(result);
     } catch (error) {
-      console.error('Error removing password:', error);
+      console.error('Error processing password:', error);
       if (error instanceof Error && error.message.includes('Incorrect password')) {
         toast.error('Incorrect password. Please try again.');
       } else {
-        toast.error('Failed to remove PDF password. Please try again.');
+        toast.error(`Failed to ${mode} PDF password. Please try again.`);
       }
     } finally {
       setIsProcessing(false);
@@ -72,13 +80,14 @@ export const PdfPasswordRemover = () => {
   };
 
   const handleDownload = () => {
-    if (!unlockedFile || !originalFile) return;
+    if (!processedFile || !originalFile) return;
 
-    const url = URL.createObjectURL(unlockedFile);
+    const url = URL.createObjectURL(processedFile);
     const a = document.createElement('a');
     a.href = url;
     
-    const fileName = originalFile.name.replace('.pdf', '_unlocked.pdf');
+    const suffix = mode === 'remove' ? '_unlocked' : '_protected';
+    const fileName = originalFile.name.replace('.pdf', `${suffix}.pdf`);
     a.download = fileName;
     
     document.body.appendChild(a);
@@ -86,7 +95,7 @@ export const PdfPasswordRemover = () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    toast.success('Unlocked PDF downloaded successfully!');
+    toast.success(`${mode === 'remove' ? 'Unlocked' : 'Protected'} PDF downloaded successfully!`);
   };
 
   const formatFileSize = (bytes: number) => {
@@ -99,8 +108,8 @@ export const PdfPasswordRemover = () => {
 
   return (
     <ToolCard
-      title="PDF Password Remover"
-      description="Remove password protection from PDF files instantly"
+      title="PDF Password Manager"
+      description="Remove or add password protection to PDF files instantly"
       icon={<Unlock className="h-6 w-6" />}
     >
       <div className="space-y-6">
@@ -127,54 +136,62 @@ export const PdfPasswordRemover = () => {
               </div>
             )}
 
-            {!isChecking && !isPasswordRequired && (
-              <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                <p className="text-sm text-green-400">✓ This PDF is not password protected</p>
-              </div>
-            )}
-
-            {!isChecking && isPasswordRequired && (
+            {!isChecking && (
               <div className="space-y-4">
-                <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    <Key className="h-4 w-4 text-yellow-400" />
-                    <p className="text-sm text-yellow-400">This PDF is password protected</p>
+                {!isPasswordRequired ? (
+                  <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+                    <p className="text-sm text-green-400">✓ This PDF is not password protected</p>
+                    <p className="text-xs text-muted-foreground mt-1">You can add password protection below</p>
                   </div>
-                </div>
+                ) : (
+                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <div className="flex items-center space-x-2">
+                      <Key className="h-4 w-4 text-yellow-400" />
+                      <p className="text-sm text-yellow-400">This PDF is password protected</p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="password">Enter PDF Password</Label>
+                  <Label htmlFor="password">
+                    {mode === 'remove' ? 'Current PDF Password' : 'New Password'}
+                  </Label>
                   <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter the password to unlock this PDF"
+                    placeholder={mode === 'remove' ? 'Enter current password' : 'Enter new password'}
                     className="w-full"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
-                        handleRemovePassword();
+                        handleProcessPassword();
                       }
                     }}
                   />
                 </div>
 
                 <Button
-                  onClick={handleRemovePassword}
+                  onClick={handleProcessPassword}
                   disabled={isProcessing || !password.trim()}
                   className="w-full bg-gradient-primary hover:opacity-90"
                 >
-                  {isProcessing ? 'Removing Password...' : 'Remove Password'}
+                  {isProcessing 
+                    ? `${mode === 'remove' ? 'Removing' : 'Adding'} Password...` 
+                    : `${mode === 'remove' ? 'Remove' : 'Add'} Password`
+                  }
                 </Button>
               </div>
             )}
 
-            {unlockedFile && (
+            {processedFile && (
               <div className="space-y-4">
                 <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                  <p className="text-sm text-green-400 font-medium">✓ Password removed successfully!</p>
+                  <p className="text-sm text-green-400 font-medium">
+                    ✓ Password {mode === 'remove' ? 'removed' : 'added'} successfully!
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Your PDF is now unlocked and ready to download
+                    Your PDF is ready to download
                   </p>
                 </div>
 
@@ -183,7 +200,7 @@ export const PdfPasswordRemover = () => {
                   className="w-full bg-green-600 hover:bg-green-700"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Download Unlocked PDF
+                  Download {mode === 'remove' ? 'Unlocked' : 'Protected'} PDF
                 </Button>
               </div>
             )}
@@ -195,7 +212,7 @@ export const PdfPasswordRemover = () => {
             <button
               onClick={() => {
                 setOriginalFile(null);
-                setUnlockedFile(null);
+                setProcessedFile(null);
                 setPassword('');
                 setIsPasswordRequired(false);
               }}
