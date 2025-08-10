@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Maximize2 } from 'lucide-react';
 import { FileDropzone } from '@/components/FileDropzone';
 import { ProcessingCard } from '@/components/ProcessingCard';
@@ -27,7 +27,7 @@ export const ImageUpscaler = () => {
     setProcessedImageUrl('');
   };
 
-  const handleUpscale = async () => {
+  const handleUpscale = useCallback(async () => {
     if (!originalFile) return;
 
     setIsProcessing(true);
@@ -51,9 +51,9 @@ export const ImageUpscaler = () => {
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [originalFile, scale]);
 
-  const handleOptimize = async () => {
+  const handleOptimize = useCallback(async () => {
     if (!originalFile) return;
 
     setIsProcessing(true);
@@ -76,7 +76,7 @@ export const ImageUpscaler = () => {
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [originalFile]);
 
   const handleDownload = () => {
     if (!processedFile || !originalFile) return;

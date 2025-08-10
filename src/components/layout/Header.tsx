@@ -13,6 +13,7 @@ const Header = () => {
     { name: 'Image Upscaler', href: '/image-upscaler' },
     { name: 'Document Converter', href: '/document-converter' },
     { name: 'File Compressor', href: '/file-compressor' },
+    { name: 'PDF Unlock', href: '/pdf-password-remover' },
   ];
 
   return (
