@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Youtube, Linkedin } from 'lucide-react';
-import logo from '@/assets/logo.png';
 
 const Footer = () => {
   return (
@@ -10,7 +9,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center">
-              <img src="/lovable-uploads/d6e67793-e22c-4362-a794-c59496780b93.png" alt="Remove Background Logo" className="h-24 w-auto" />
+              <img src="/uploads/logo.png" alt="ImageDocPro Logo" className="h-[50px] w-auto" />
             </div>
             <p className="text-sm text-muted-foreground">
               Professional AI-powered tools for image processing and file conversion. 
@@ -66,13 +65,13 @@ const Footer = () => {
             <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Youtube className="h-5 w-5" />
             </a>
-            <a href="https://www.linkedin.com/company/removerbackground" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="https://www.linkedin.com/company/imagedocpro" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Linkedin className="h-5 w-5" />
             </a>
           </div>
           
           <p className="text-sm text-muted-foreground">
-            © 2024 RemoverBackground. All rights reserved.
+            © {new Date().getFullYear()} ImageDocPro. All rights reserved.
           </p>
         </div>
       </div>

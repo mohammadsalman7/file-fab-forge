@@ -13,11 +13,11 @@ const Index = () => {
         <div className="container mx-auto px-6 py-16 text-center">
           <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-8 shadow-glass border border-white/20">
             <h1 className="text-5xl font-bold mb-4 text-white">
-              File Processing Studio
+              Remove Background Online Free | File Processing Studio
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Professional-grade tools for image processing and document conversion. 
-              Remove backgrounds, upscale images, and convert files with AI-powered precision.
+              Free online background remover, image upscaler, and file converter. Remove background from images online free with AI precision. 
+              Professional-grade tools for image processing and document conversion.
             </p>
             <div className="flex justify-center space-x-6 text-white/80 flex-wrap">
               <div className="flex items-center space-x-2">
@@ -51,14 +51,14 @@ const Index = () => {
                   <Scissors className="h-6 w-6 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">Background Remover</CardTitle>
-                  <CardDescription>AI-powered background removal</CardDescription>
+                  <CardTitle className="text-xl">Remove Background Online Free</CardTitle>
+                  <CardDescription>AI-powered background removal tool</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground mb-4">
-                Remove backgrounds from any image with AI precision. Works with logos, people, products, and text.
+                Remove background from images online free with AI precision. Works with logos, people, products, and text. Free online background remover tool.
               </p>
               <Link to="/background-remover">
                 <Button className="w-full group-hover:bg-primary/90 transition-colors">

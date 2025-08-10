@@ -1,0 +1,22 @@
+{
+  "name": "ImageDocPro - Remove Background Online Free",
+  "short_name": "ImageDocPro",
+  "description": "Free online background remover, image upscaler, and file converter. Remove background from images online free with AI precision.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/uploads/logo2.jpg",
+      "sizes": "16x16 32x32 48x48 64x64 128x128 256x256",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "photo"],
+  "lang": "en",
+  "scope": "/",
+  "prefer_related_applications": false
+}
