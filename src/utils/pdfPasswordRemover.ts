@@ -5,7 +5,7 @@ export const removePdfPassword = async (pdfBlob: Blob, password: string): Promis
     const arrayBuffer = await pdfBlob.arrayBuffer();
     
     // Load the PDF with password
-    const pdfDoc = await PDFDocument.load(arrayBuffer);
+    const pdfDoc = await PDFDocument.load(arrayBuffer, { password });
     
     // Save without password protection
     const pdfBytes = await pdfDoc.save();
