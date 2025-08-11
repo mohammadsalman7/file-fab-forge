@@ -15,7 +15,6 @@ export const PdfPasswordRemover = () => {
   const [password, setPassword] = useState('');
   const [isPasswordRequired, setIsPasswordRequired] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
-  const [mode] = useState<'remove'>('remove');
 
   const handleFileSelect = async (file: File) => {
     if (file.type !== 'application/pdf') {
@@ -71,7 +70,7 @@ export const PdfPasswordRemover = () => {
     const a = document.createElement('a');
     a.href = url;
     
-    const fileName = originalFile.name.replace(/\.pdf$/i, `_unlocked.pdf`);
+    const fileName = originalFile.name.replace(/\.pdf$/i, '_unlocked.pdf');
     a.download = fileName;
     
     document.body.appendChild(a);

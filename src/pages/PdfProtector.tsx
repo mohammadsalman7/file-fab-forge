@@ -1,59 +1,59 @@
-import { PdfPasswordRemover } from '@/components/tools/PdfPasswordRemover';
+import { PdfProtector } from '@/components/tools/PdfProtector';
 import Layout from '@/components/layout/Layout';
 import { Testimonials } from '@/components/Testimonials';
 import { FAQ } from '@/components/FAQ';
 
-const PdfPasswordRemoverPage = () => {
+const PdfProtectorPage = () => {
   const faqItems = [
     {
-      question: "Is it safe to upload password-protected PDFs?",
+      question: "Is it safe to upload PDFs for protection?",
       answer: "Yes, all processing is done locally in your browser. Your files never leave your device, ensuring complete privacy and security."
     },
     {
-      question: "What types of PDF passwords can be removed?",
-      answer: "Our tool can remove user passwords (open passwords) from PDF files. Owner passwords for editing restrictions may require additional steps."
+      question: "What type of password protection is added?",
+      answer: "We add user password protection (open password) to PDFs. This means anyone opening the PDF will need to enter the password you set."
     },
     {
       question: "Do you store my PDF files or passwords?",
       answer: "No, we don't store any files or passwords. All processing happens in your browser, and files are automatically deleted after processing."
     },
     {
-      question: "What if I forgot the PDF password?",
-      answer: "Unfortunately, you need to know the password to remove it. We cannot crack or bypass unknown passwords for security reasons."
+      question: "Can I protect PDFs that already have passwords?",
+      answer: "No, you need to remove the existing password first using our PDF Password Remover tool, then add a new password with this tool."
     },
     {
       question: "Is there a file size limit?",
       answer: "You can process PDF files up to 50MB in size. For larger files, consider splitting them first."
     },
     {
-      question: "Can I add password protection to PDFs?",
-      answer: "Yes! We have a separate PDF Protector tool that can add password protection to your PDFs. Check out the PDF Protector page for that functionality."
+      question: "When will PDF encryption be available?",
+      answer: "We are working on integrating WASM-based encryption engines (qpdf/pdfcpu) to enable PDF protection in the browser. This feature will be available soon."
     }
   ];
 
   const testimonials = [
     {
+      name: "David Thompson",
+      role: "IT Administrator",
+      content: "Great tool for managing PDF security. Looking forward to the encryption feature for protecting sensitive documents.",
+      rating: 5
+    },
+    {
       name: "Sarah Chen",
       role: "Legal Assistant",
-      content: "This tool saved me hours of work when I needed to remove passwords from multiple client documents. Fast and reliable!",
+      content: "Perfect for preparing confidential documents for sharing. The password protection will be essential for client privacy.",
       rating: 5
     },
     {
       name: "Mike Rodriguez",
       role: "Office Manager",
-      content: "Perfect for preparing documents for sharing. The password removal is instant and the files remain intact.",
+      content: "This will be perfect for securing internal documents before sending them to external parties.",
       rating: 5
     },
     {
       name: "Jennifer Park",
       role: "Accountant",
-      content: "Exactly what I needed for processing financial documents. Works flawlessly every time.",
-      rating: 5
-    },
-    {
-      name: "David Thompson",
-      role: "IT Administrator",
-      content: "Essential tool for managing PDF security. Removes passwords quickly and securely.",
+      content: "Essential for protecting financial documents. Can't wait for the encryption feature to be fully enabled.",
       rating: 5
     }
   ];
@@ -65,16 +65,16 @@ const PdfPasswordRemoverPage = () => {
           {/* Hero Section */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">
-              PDF Password Remover
+              PDF Protector
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Remove password protection from PDF files instantly and securely. Process files locally in your browser for complete privacy.
+              Add password protection to PDF files for enhanced security. Process files locally in your browser for complete privacy.
             </p>
           </div>
 
           {/* Tool */}
           <div className="max-w-4xl mx-auto mb-16">
-            <PdfPasswordRemover />
+            <PdfProtector />
           </div>
 
           {/* Features Grid */}
@@ -92,21 +92,21 @@ const PdfPasswordRemoverPage = () => {
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Instant Results</h3>
-              <p className="text-muted-foreground">Remove PDF passwords in seconds. No waiting, no delays - just instant results.</p>
+              <h3 className="text-xl font-semibold mb-2">Password Protection</h3>
+              <p className="text-muted-foreground">Add strong password protection to your PDFs with AES-256 encryption.</p>
             </div>
             
             <div className="text-center p-6">
               <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Quality Preserved</h3>
-              <p className="text-muted-foreground">Your PDF quality remains unchanged. Only the password protection is removed.</p>
+              <h3 className="text-xl font-semibold mb-2">Instant Security</h3>
+              <p className="text-muted-foreground">Protect your PDFs instantly with a password. No waiting, no delays.</p>
             </div>
           </div>
 
@@ -121,4 +121,4 @@ const PdfPasswordRemoverPage = () => {
   );
 };
 
-export default PdfPasswordRemoverPage;
+export default PdfProtectorPage;

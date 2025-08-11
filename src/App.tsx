@@ -13,6 +13,7 @@ const ImageUpscalerPage = lazy(() => import("./pages/ImageUpscaler"));
 const DocumentConverterPage = lazy(() => import("./pages/DocumentConverter"));
 const FileCompressorPage = lazy(() => import("./pages/FileCompressor"));
 const PdfPasswordRemoverPage = lazy(() => import("./pages/PdfPasswordRemover"));
+const PdfProtectorPage = lazy(() => import("./pages/PdfProtector"));
 const FAQPage = lazy(() => import("./pages/FAQ"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
@@ -52,6 +53,7 @@ const App = () => (
             <Route path="/document-converter" element={<DocumentConverterPage />} />
             <Route path="/file-compressor" element={<FileCompressorPage />} />
             <Route path="/pdf-password-remover" element={<PdfPasswordRemoverPage />} />
+            <Route path="/pdf-protector" element={<PdfProtectorPage />} />
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/support" element={<Support />} />
             <Route path="/help-center" element={<HelpCenter />} />

@@ -1,20 +1,21 @@
 const CACHE_NAME = 'file-fab-forge-v1';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
   '/manifest.json',
   '/favicon.ico',
 ];
 
 // Install event
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache);
-      })
-  );
+  event.waitUntil((async () => {
+    try {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.addAll(urlsToCache);
+    } catch (err) {
+      // Ignore cache add failures (e.g., missing files in dev/hmr)
+      console.warn('[SW] cache.addAll failed:', err);
+    }
+  })());
 });
 
 // Fetch event

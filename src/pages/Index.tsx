@@ -1,4 +1,4 @@
-import { Scissors, Maximize2, FileText, ArrowRight, Minimize2, Unlock } from 'lucide-react';
+import { Scissors, Maximize2, FileText, ArrowRight, Minimize2, Unlock, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,11 +13,11 @@ const Index = () => {
         <div className="container mx-auto px-6 py-16 text-center">
           <div className="backdrop-blur-sm bg-white/10 rounded-2xl p-8 shadow-glass border border-white/20">
             <h1 className="text-5xl font-bold mb-4 text-white">
-             ImageDocPro - Free Online Image Processing Tools
+             ImageDocPro - Free Online Image & PDF Processing Tools
             </h1>
             <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Free online background remover, image upscaler, and file converter. Remove background from images online free with AI precision. 
-              Professional-grade tools for image processing and document conversion.
+              Free online background remover, image upscaler, file converter, and PDF password tools. Remove background from images online free with AI precision. 
+              Professional-grade tools for image processing, document conversion, and PDF security.
             </p>
             <div className="flex justify-center space-x-6 text-white/80 flex-wrap">
               <div className="flex items-center space-x-2">
@@ -36,6 +36,10 @@ const Index = () => {
                 <Minimize2 className="h-5 w-5" />
                 <span>File Compression</span>
               </div>
+              <div className="flex items-center space-x-2">
+                <Unlock className="h-5 w-5" />
+                <span>PDF Password Tools</span>
+              </div>
             </div>
           </div>
         </div>
@@ -43,7 +47,7 @@ const Index = () => {
 
       {/* Tools Grid */}
       <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 max-w-7xl mx-auto">
           <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center space-x-3">
@@ -161,6 +165,31 @@ const Index = () => {
                 Remove password protection from PDF files quickly and securely with our advanced tool.
               </p>
               <Link to="/pdf-password-remover">
+                <Button className="w-full group-hover:bg-primary/90 transition-colors">
+                  Get Started
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Lock className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">PDF Protector</CardTitle>
+                  <CardDescription>Protect PDF files with a password</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Secure your PDF documents by adding a password for access.
+              </p>
+              <Link to="/pdf-protector">
                 <Button className="w-full group-hover:bg-primary/90 transition-colors">
                   Get Started
                   <ArrowRight className="h-4 w-4 ml-2" />

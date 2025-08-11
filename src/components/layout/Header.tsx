@@ -14,6 +14,7 @@ const Header = () => {
     { name: 'Document Converter', href: '/document-converter' },
     { name: 'File Compressor', href: '/file-compressor' },
     { name: 'PDF Unlock', href: '/pdf-password-remover' },
+    // { name: 'PDF Protector', href: '/pdf-protector' },
   ];
 
   return (

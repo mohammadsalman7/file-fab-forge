@@ -89,6 +89,4 @@ export const removePdfPassword = async (pdfBlob: Blob, password: string): Promis
 };
 
 // Adding password encryption in-browser is not supported with current deps
-export const addPdfPassword = async (_pdfBlob: Blob, _password: string): Promise<Blob> => {
-  throw new Error('Adding password encryption is not supported in this browser tool.');
-};
+// Note: addPdfPassword moved to `src/utils/pdfProtector.ts`
