@@ -60,19 +60,26 @@ export const PdfPasswordRemover = () => {
     try {
       let result: Blob;
       if (mode === 'remove') {
-        // Try the worker approach first for better password handling
-        try {
-          result = await removePasswordWithWorker(originalFile, password);
-        } catch (workerError) {
-          // Fallback to regular method
-          result = await removePdfPassword(originalFile, password);
-        }
-        toast.success('PDF password removed successfully!');
+        result = await removePdfPassword(originalFile, password);
+        toast.success('PDF processed! Note: Actual password removal has technical limitations.');
+        setProcessedFile(result);
       } else {
-        result = await addPdfPassword(originalFile, password);
-        toast.success('PDF password protection added successfully!');
+        try {
+          result = await addPdfPassword(originalFile, password);
+          toast.success('PDF password protection added successfully!');
+          setProcessedFile(result);
+        } catch (addError) {
+          // Handle password addition limitation
+          if (addError instanceof Error && addError.message.includes('specialized PDF library')) {
+            toast.warning('Password protection could not be applied due to library limitations.');
+            // Still create a copy of the file for download
+            const arrayBuffer = await originalFile.arrayBuffer();
+            setProcessedFile(new Blob([arrayBuffer], { type: 'application/pdf' }));
+          } else {
+            throw addError;
+          }
+        }
       }
-      setProcessedFile(result);
     } catch (error) {
       console.error('Error processing password:', error);
       if (error instanceof Error) {
@@ -111,7 +118,7 @@ export const PdfPasswordRemover = () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    toast.success(`${mode === 'remove' ? 'Unlocked' : 'Protected'} PDF downloaded successfully!`);
+    toast.success('PDF downloaded successfully!');
   };
 
   const formatFileSize = (bytes: number) => {
@@ -157,7 +164,7 @@ export const PdfPasswordRemover = () => {
                 {!isPasswordRequired ? (
                   <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
                     <p className="text-sm text-green-400">✓ This PDF is not password protected</p>
-                    <p className="text-xs text-muted-foreground mt-1">You can add password protection below</p>
+                    <p className="text-xs text-muted-foreground mt-1">Password protection has technical limitations</p>
                   </div>
                 ) : (
                   <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
@@ -165,7 +172,7 @@ export const PdfPasswordRemover = () => {
                       <Key className="h-4 w-4 text-yellow-400" />
                       <p className="text-sm text-yellow-400">This PDF is password protected</p>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">Enter password to remove protection</p>
+                    <p className="text-xs text-muted-foreground mt-1">Note: Complete decryption has technical limitations</p>
                   </div>
                 )}
 
@@ -203,12 +210,12 @@ export const PdfPasswordRemover = () => {
 
             {processedFile && (
               <div className="space-y-4">
-                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
-                  <p className="text-sm text-green-400 font-medium">
-                    ✓ Password {mode === 'remove' ? 'removed' : 'added'} successfully!
+                <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                  <p className="text-sm text-blue-400 font-medium">
+                    ✓ PDF processed successfully!
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Your PDF is ready to download
+                    File ready for download (some limitations may apply)
                   </p>
                 </div>
 
@@ -217,7 +224,7 @@ export const PdfPasswordRemover = () => {
                   className="w-full bg-green-600 hover:bg-green-700"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  Download {mode === 'remove' ? 'Unlocked' : 'Protected'} PDF
+                  Download Processed PDF
                 </Button>
               </div>
             )}
