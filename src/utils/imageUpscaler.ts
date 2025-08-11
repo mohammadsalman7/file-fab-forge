@@ -168,12 +168,12 @@ export const upscaleImageRealESRGAN = async (imageElement: HTMLImageElement, sca
       );
       
       // Create upscaled image data
-      const upscaledImageData = new ImageData(new Uint8ClampedArray(upscaledData), finalWidth, finalHeight);
+      const upscaledImageData = new ImageData(upscaledData, finalWidth, finalHeight);
       
       // Apply unsharp masking for enhanced detail
       console.log('Applying unsharp masking for enhanced detail...');
       const sharpenedData = applyUnsharpMask(upscaledData, finalWidth, finalHeight);
-      const finalImageData = new ImageData(new Uint8ClampedArray(sharpenedData), finalWidth, finalHeight);
+      const finalImageData = new ImageData(sharpenedData, finalWidth, finalHeight);
       
       // Create final canvas
       canvas.width = finalWidth;
