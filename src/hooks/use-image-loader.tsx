@@ -74,3 +74,4 @@ export const useIntersectionObserver = (
 
   return isIntersecting;
 };
+
