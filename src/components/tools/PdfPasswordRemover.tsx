@@ -5,7 +5,7 @@ import { ToolCard } from '@/components/ToolCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { removePdfPassword, checkPdfPassword, addPdfPassword } from '@/utils/pdfPasswordRemover';
+import { removePdfPassword, checkPdfPassword, addPdfPassword, removePasswordWithWorker } from '@/utils/pdfPasswordRemover';
 import { toast } from 'sonner';
 
 export const PdfPasswordRemover = () => {
@@ -60,11 +60,17 @@ export const PdfPasswordRemover = () => {
     try {
       let result: Blob;
       if (mode === 'remove') {
-        result = await removePdfPassword(originalFile, password);
+        // Try the worker approach first for better password handling
+        try {
+          result = await removePasswordWithWorker(originalFile, password);
+        } catch (workerError) {
+          // Fallback to regular method
+          result = await removePdfPassword(originalFile, password);
+        }
         toast.success('PDF password removed successfully!');
       } else {
         result = await addPdfPassword(originalFile, password);
-        toast.success('PDF password added successfully!');
+        toast.success('PDF password protection added successfully!');
       }
       setProcessedFile(result);
     } catch (error) {
@@ -151,15 +157,15 @@ export const PdfPasswordRemover = () => {
                 {!isPasswordRequired ? (
                   <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
                     <p className="text-sm text-green-400">✓ This PDF is not password protected</p>
-                    <p className="text-xs text-muted-foreground mt-1">Note: Password protection feature is currently limited</p>
+                    <p className="text-xs text-muted-foreground mt-1">You can add password protection below</p>
                   </div>
                 ) : (
-                  <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                     <div className="flex items-center space-x-2">
-                      <Key className="h-4 w-4 text-red-400" />
-                      <p className="text-sm text-red-400">This PDF is password protected</p>
+                      <Key className="h-4 w-4 text-yellow-400" />
+                      <p className="text-sm text-yellow-400">This PDF is password protected</p>
                     </div>
-                    <p className="text-xs text-muted-foreground mt-1">Current library limitations prevent password removal</p>
+                    <p className="text-xs text-muted-foreground mt-1">Enter password to remove protection</p>
                   </div>
                 )}
 
