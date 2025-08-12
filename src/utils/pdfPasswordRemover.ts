@@ -79,7 +79,7 @@ export const removePdfPassword = async (pdfBlob: Blob, password: string): Promis
     }
 
     const unlockedBytes = await newPdf.save();
-    return new Blob([unlockedBytes], { type: 'application/pdf' });
+    return new Blob([new Uint8Array(unlockedBytes)], { type: 'application/pdf' });
   } catch (error) {
     console.error('Error removing PDF password (rasterize):', error);
     throw new Error('Failed to remove PDF password');

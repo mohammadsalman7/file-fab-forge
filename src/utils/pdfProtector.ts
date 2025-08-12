@@ -16,7 +16,7 @@ export const addPdfPassword = async (pdfBlob: Blob, password: string): Promise<B
       throw new Error('unavailable');
     }
     const encryptedBytes = await encryptPdfInBrowser(pdfBytes, password);
-    return new Blob([encryptedBytes], { type: 'application/pdf' });
+    return new Blob([new Uint8Array(encryptedBytes)], { type: 'application/pdf' });
   } catch (err) {
     // Keep logs for debugging, show friendly message to user
     console.error('PDF encryption not available:', err);

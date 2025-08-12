@@ -1,4 +1,4 @@
-import { Scissors, Maximize2, FileText, ArrowRight, Minimize2, Unlock, Lock } from 'lucide-react';
+import { Scissors, Maximize2, FileText, ArrowRight, Minimize2, Unlock, Lock, QrCode } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,6 +40,10 @@ const Index = () => {
                 <Unlock className="h-5 w-5" />
                 <span>PDF Password Tools</span>
               </div>
+              <div className="flex items-center space-x-2">
+                <QrCode className="h-5 w-5" />
+                <span>QR & Barcode Generator</span>
+              </div>
             </div>
           </div>
         </div>
@@ -47,7 +51,7 @@ const Index = () => {
 
       {/* Tools Grid */}
       <div className="container mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-6 max-w-7xl mx-auto">
           <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center space-x-3">
@@ -190,6 +194,31 @@ const Index = () => {
                 Secure your PDF documents by adding a password for access.
               </p>
               <Link to="/pdf-protector">
+                <Button className="w-full group-hover:bg-primary/90 transition-colors">
+                  Get Started
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <QrCode className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl">QR & Barcode Generator</CardTitle>
+                  <CardDescription>Generate QR codes and barcodes</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Create professional QR codes and barcodes for names, numbers, links, addresses, and PINs instantly.
+              </p>
+              <Link to="/code-generator">
                 <Button className="w-full group-hover:bg-primary/90 transition-colors">
                   Get Started
                   <ArrowRight className="h-4 w-4 ml-2" />
