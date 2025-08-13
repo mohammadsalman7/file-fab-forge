@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    fs: {
+      strict: false
+    }
   },
   plugins: [
     react(),
@@ -97,7 +100,9 @@ export default defineConfig(({ mode }) => ({
         'worker_threads',
         'fs/promises',
         'path/posix',
-        'path/win32'
+        'path/win32',
+        'qrcode',
+        'jsbarcode'
       ],
       output: {
         manualChunks: {
