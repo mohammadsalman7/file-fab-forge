@@ -12,10 +12,10 @@ const Index = () => {
       <div className="relative overflow-hidden bg-gradient-primary">
         <div className="container mx-auto px-6 py-24 text-center">
           <div className="backdrop-blur-sm bg-white/10 rounded-3xl p-12 shadow-glass border border-white/20 max-w-5xl mx-auto">
-            <h1 className="text-6xl font-bold mb-8 text-white leading-tight">
+            <h1 className="text-4xl font-bold mb-8 text-white leading-tight">
              ImageDocPro - Free Online Image & PDF Processing Tools
             </h1>
-            <p className="text-2xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
               Free online background remover, image upscaler, file converter, and PDF password tools. Remove background from images online free with AI precision. 
               Professional-grade tools for image processing, document conversion, and PDF security.
             </p>
