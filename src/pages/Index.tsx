@@ -52,8 +52,8 @@ const Index = () => {
         {/* Tools Grid */}
         <div className="container max-w-7xl mx-auto px-6 py-24">
           <div className="text-center mb-16">
-            <h2 className="text-2xl  lg:text-4xl font-bold mb-6 text-foreground">Our Professional Tools</h2>
-            <p className="text-base  lg:text-xl text-muted-foreground max-w-3xl mx-auto">
+            <h2 className="text-4xl font-bold mb-6 text-foreground">Our Professional Tools</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Choose from our comprehensive suite of online tools designed to handle all your image and document processing needs
             </p>
           </div>
