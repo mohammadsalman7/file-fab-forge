@@ -5,7 +5,7 @@ import { QrCode, Barcode, Smartphone, Link, MapPin } from 'lucide-react';
 const CodeGeneratorPage = () => {
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* SEO Optimized Header */}
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">

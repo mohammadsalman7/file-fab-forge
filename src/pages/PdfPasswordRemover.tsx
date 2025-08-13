@@ -61,7 +61,7 @@ const PdfPasswordRemoverPage = () => {
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-subtle">
-        <div className="container mx-auto px-4 pt-8 pb-16">
+        <div className="max-w-7xl mx-auto px-4 pt-8 pb-16">
           {/* Hero Section */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-primary bg-clip-text text-transparent mb-6">

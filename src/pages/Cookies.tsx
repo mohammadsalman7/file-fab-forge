@@ -3,7 +3,7 @@ import Layout from '@/components/layout/Layout';
 const Cookies = () => {
   return (
     <Layout>
-      <div className="container mx-auto px-6 py-16 max-w-4xl">
+      <div className="max-w-7xl mx-auto px-6 py-16">
         <h1 className="text-4xl font-bold mb-8">Cookie Policy</h1>
         
         <div className="prose prose-lg max-w-none space-y-8">
