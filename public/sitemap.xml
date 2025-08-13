@@ -43,6 +43,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://imagedocpro.com/pdf-protector</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://imagedocpro.com/faq</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>monthly</changefreq>
@@ -74,6 +80,12 @@
   </url>
   <url>
     <loc>https://imagedocpro.com/privacy</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://imagedocpro.com/cookies</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>

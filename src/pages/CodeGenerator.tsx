@@ -1,10 +1,26 @@
 import Layout from '@/components/layout/Layout';
 import { CodeGenerator } from '@/components/tools/CodeGenerator';
 import { QrCode, Barcode, Smartphone, Link, MapPin } from 'lucide-react';
+import { SEO } from '@/components/SEO';
 
 const CodeGeneratorPage = () => {
   return (
     <Layout>
+      <SEO
+        title="QR Code & Barcode Generator – Create Codes Online Free | ImageDocPro"
+        description="Generate QR codes and barcodes online for names, numbers, links, addresses, and PINs. Download PNG or JPG instantly. Free and private."
+        canonical="https://imagedocpro.com/code-generator"
+        image="https://imagedocpro.com/uploads/logo2.jpg"
+        type="article"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'SoftwareApplication',
+          name: 'QR & Barcode Generator',
+          applicationCategory: 'UtilityApplication',
+          operatingSystem: 'Web Browser',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        }}
+      />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* SEO Optimized Header */}
         <header className="text-center mb-8">

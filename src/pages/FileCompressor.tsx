@@ -5,6 +5,7 @@ import { FileCompressor } from '@/components/tools/FileCompressor';
 import { FAQ } from '@/components/FAQ';
 import { Testimonials } from '@/components/Testimonials';
 import Layout from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 
 const fileCompressorFAQs = [
   {
@@ -57,6 +58,34 @@ const fileCompressorTestimonials = [
 const FileCompressorPage = () => {
   return (
     <Layout>
+      <SEO
+        title="File Compressor – Compress Images, Videos, PDFs Online | ImageDocPro"
+        description="Compress JPG, PNG, MP4, MP3, PDF, Word, Excel, and CSV files online. Reduce file size while maintaining quality. Free and fast."
+        canonical="https://imagedocpro.com/file-compressor"
+        image="https://imagedocpro.com/uploads/logo2.jpg"
+        type="article"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'SoftwareApplication',
+              name: 'File Compressor',
+              url: 'https://imagedocpro.com/file-compressor',
+              applicationCategory: 'UtilityApplication',
+              operatingSystem: 'Web Browser',
+              offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
+            },
+            {
+              '@type': 'FAQPage',
+              mainEntity: fileCompressorFAQs.map(f => ({
+                '@type': 'Question',
+                name: f.question,
+                acceptedAnswer: { '@type': 'Answer', text: f.answer }
+              }))
+            }
+          ]
+        }}
+      />
       <div className="min-h-screen bg-gradient-secondary">
       {/* Header */}
       <div className="bg-gradient-primary">

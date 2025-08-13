@@ -3,23 +3,42 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 
 const Index = () => {
   return (
     <Layout>
+      <SEO
+        title="ImageDocPro – Free Online Background Remover, AI Image Upscaler, PDF & File Tools"
+        description="Free online tools: AI background remover, image upscaler, document converter, file compressor, PDF password remover/protector, and QR/Barcode generator. Fast, secure, and free."
+        canonical="https://imagedocpro.com/"
+        image="https://imagedocpro.com/uploads/logo2.jpg"
+        type="website"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          name: 'ImageDocPro',
+          url: 'https://imagedocpro.com/',
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: 'https://imagedocpro.com/?q={search_term_string}',
+            'query-input': 'required name=search_term_string',
+          },
+        }}
+      />
       <div className="min-h-screen bg-gradient-secondary">
         {/* Header */}
         <div className="relative overflow-hidden bg-gradient-primary">
-          <div className="container mx-auto px-6 py-24 text-center">
+          <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center">
             <div className="backdrop-blur-sm bg-white/10 rounded-3xl p-12 shadow-glass border border-white/20 max-w-5xl mx-auto">
               <h1 className="text-4xl font-bold mb-8 text-white leading-tight">
-                ImageDocPro - Free Online Image & PDF Processing Tools
+                ImageDocPro
               </h1>
               <p className="text-xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
                 Free online background remover, image upscaler, file converter, and PDF password tools. Remove background from images online free with AI precision. 
                 Professional-grade tools for image processing, document conversion, and PDF security.
               </p>
-              <div className="flex justify-center space-x-8 text-white/80 flex-wrap gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 text-white/80 justify-center max-w-2xl mx-auto">
                 <div className="flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-full">
                   <Scissors className="h-6 w-6" />
                   <span className="font-medium">AI Background Removal</span>
@@ -45,12 +64,13 @@ const Index = () => {
                   <span className="font-medium">QR & Barcode Generator</span>
                 </div>
               </div>
+              
             </div>
           </div>
         </div>
 
         {/* Tools Grid */}
-        <div className="container max-w-7xl mx-auto px-6 py-24">
+        <div id="tools" className="container max-w-7xl mx-auto px-6 py-24">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-6 text-foreground">Our Professional Tools</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">

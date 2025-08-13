@@ -2,6 +2,7 @@ import { PdfPasswordRemover } from '@/components/tools/PdfPasswordRemover';
 import Layout from '@/components/layout/Layout';
 import { Testimonials } from '@/components/Testimonials';
 import { FAQ } from '@/components/FAQ';
+import { SEO } from '@/components/SEO';
 
 const PdfPasswordRemoverPage = () => {
   const faqItems = [
@@ -60,6 +61,34 @@ const PdfPasswordRemoverPage = () => {
 
   return (
     <Layout>
+      <SEO
+        title="PDF Password Remover – Unlock PDF Online Free | ImageDocPro"
+        description="Remove password protection from PDF files instantly in your browser. Safe, private, and free. Download your unlocked PDF in seconds."
+        canonical="https://imagedocpro.com/pdf-password-remover"
+        image="https://imagedocpro.com/uploads/logo2.jpg"
+        type="article"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'SoftwareApplication',
+              name: 'PDF Password Remover',
+              url: 'https://imagedocpro.com/pdf-password-remover',
+              applicationCategory: 'UtilityApplication',
+              operatingSystem: 'Web Browser',
+              offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
+            },
+            {
+              '@type': 'FAQPage',
+              mainEntity: faqItems.map(f => ({
+                '@type': 'Question',
+                name: f.question,
+                acceptedAnswer: { '@type': 'Answer', text: f.answer }
+              }))
+            }
+          ]
+        }}
+      />
       <div className="min-h-screen bg-gradient-subtle">
         <div className="max-w-7xl mx-auto px-4 pt-8 pb-16">
           {/* Hero Section */}

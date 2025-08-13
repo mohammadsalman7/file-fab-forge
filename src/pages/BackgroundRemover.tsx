@@ -5,6 +5,7 @@ import { BackgroundRemover } from '@/components/tools/BackgroundRemover';
 import { FAQ } from '@/components/FAQ';
 import { Testimonials } from '@/components/Testimonials';
 import Layout from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 
 const backgroundRemoverFAQs = [
   {
@@ -57,6 +58,34 @@ const backgroundRemoverTestimonials = [
 const BackgroundRemoverPage = () => {
   return (
     <Layout>
+      <SEO
+        title="AI Background Remover – Remove Background from Images Online Free | ImageDocPro"
+        description="Remove background from images online free with AI. Works for logos, people, products, and text. Add custom backgrounds and download high‑quality PNGs."
+        canonical="https://imagedocpro.com/background-remover"
+        image="https://imagedocpro.com/uploads/logo2.jpg"
+        type="article"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'SoftwareApplication',
+              name: 'AI Background Remover',
+              url: 'https://imagedocpro.com/background-remover',
+              applicationCategory: 'MultimediaApplication',
+              operatingSystem: 'Web Browser',
+              offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
+            },
+            {
+              '@type': 'FAQPage',
+              mainEntity: backgroundRemoverFAQs.map(f => ({
+                '@type': 'Question',
+                name: f.question,
+                acceptedAnswer: { '@type': 'Answer', text: f.answer }
+              }))
+            }
+          ]
+        }}
+      />
       <div className="min-h-screen bg-gradient-secondary">
       {/* Header */}
       <div className="bg-gradient-primary">

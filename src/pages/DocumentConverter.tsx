@@ -5,6 +5,7 @@ import { DocumentConverter } from '@/components/tools/DocumentConverter';
 import { FAQ } from '@/components/FAQ';
 import { Testimonials } from '@/components/Testimonials';
 import Layout from '@/components/layout/Layout';
+import { SEO } from '@/components/SEO';
 
 const documentConverterFAQs = [
   {
@@ -57,6 +58,34 @@ const documentConverterTestimonials = [
 const DocumentConverterPage = () => {
   return (
     <Layout>
+      <SEO
+        title="Document Converter – Convert PDF, DOCX, JPG, PNG, XLSX Online | ImageDocPro"
+        description="Convert between PDF, DOC, DOCX, JPG, PNG, XLSX, CSV and more online. Fast, secure conversions directly in your browser. Free to use."
+        canonical="https://imagedocpro.com/document-converter"
+        image="https://imagedocpro.com/uploads/logo2.jpg"
+        type="article"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'SoftwareApplication',
+              name: 'Document Converter',
+              url: 'https://imagedocpro.com/document-converter',
+              applicationCategory: 'BusinessApplication',
+              operatingSystem: 'Web Browser',
+              offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
+            },
+            {
+              '@type': 'FAQPage',
+              mainEntity: documentConverterFAQs.map(f => ({
+                '@type': 'Question',
+                name: f.question,
+                acceptedAnswer: { '@type': 'Answer', text: f.answer }
+              }))
+            }
+          ]
+        }}
+      />
       <div className="min-h-screen bg-gradient-secondary">
       {/* Header */}
       <div className="bg-gradient-primary">

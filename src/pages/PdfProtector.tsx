@@ -2,6 +2,7 @@ import { PdfProtector } from '@/components/tools/PdfProtector';
 import Layout from '@/components/layout/Layout';
 import { Testimonials } from '@/components/Testimonials';
 import { FAQ } from '@/components/FAQ';
+import { SEO } from '@/components/SEO';
 
 const PdfProtectorPage = () => {
   const faqItems = [
@@ -60,6 +61,34 @@ const PdfProtectorPage = () => {
 
   return (
     <Layout>
+      <SEO
+        title="PDF Protector – Add Password to PDF Online | ImageDocPro"
+        description="Protect your PDF with a password online. Simple, fast, and secure processing in your browser. Download your locked PDF instantly."
+        canonical="https://imagedocpro.com/pdf-protector"
+        image="https://imagedocpro.com/uploads/logo2.jpg"
+        type="article"
+        structuredData={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': 'SoftwareApplication',
+              name: 'PDF Protector',
+              url: 'https://imagedocpro.com/pdf-protector',
+              applicationCategory: 'UtilityApplication',
+              operatingSystem: 'Web Browser',
+              offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
+            },
+            {
+              '@type': 'FAQPage',
+              mainEntity: faqItems.map(f => ({
+                '@type': 'Question',
+                name: f.question,
+                acceptedAnswer: { '@type': 'Answer', text: f.answer }
+              }))
+            }
+          ]
+        }}
+      />
       <div className="min-h-screen bg-gradient-subtle">
         <div className="container mx-auto px-4 pt-8 pb-16">
           {/* Hero Section */}
