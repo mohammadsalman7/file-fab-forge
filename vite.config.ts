@@ -100,9 +100,7 @@ export default defineConfig(({ mode }) => ({
         'worker_threads',
         'fs/promises',
         'path/posix',
-        'path/win32',
-        'qrcode',
-        'jsbarcode'
+        'path/win32'
       ],
       output: {
         manualChunks: {
@@ -123,6 +121,8 @@ export default defineConfig(({ mode }) => ({
       'react-router-dom',
       '@tanstack/react-query',
       'lucide-react',
+      'qrcode',
+      'jsbarcode',
     ],
     exclude: []
   },

@@ -1,4 +1,4 @@
-import QRCode from 'qrcode';
+import * as QRCode from 'qrcode';
 import JsBarcode from 'jsbarcode';
 
 export interface CodeGeneratorData {
