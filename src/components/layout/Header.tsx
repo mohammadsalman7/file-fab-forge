@@ -23,7 +23,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src="/uploads/logo.png" alt="ImageDocPro Logo" className="h-[40px] sm:h-[50px] w-auto" />
+            <img src="/uploads/logo.png" alt="ImageDocProLogo" title="ImageDocProLogo" aria-hidden="true" className="h-[40px] sm:h-[50px] w-auto" />
           </Link>
 
           {/* Desktop Navigation */}

@@ -19,7 +19,7 @@ if ('serviceWorker' in navigator) {
 // Performance optimization: Preload critical resources
 const preloadCriticalResources = () => {
   const criticalResources = [
-    '/uploads/logo2.jpg',
+    '/uploads/logo.png',
   ];
   
   criticalResources.forEach((resource) => {

@@ -9,8 +9,8 @@ const Index = () => {
   return (
     <Layout>
       <SEO
-        title="ImageDocPro – Free Online Background Remover, AI Image Upscaler, PDF & File Tools"
-        description="Free online tools: AI background remover, image upscaler, document converter, file compressor, PDF password remover/protector, and QR/Barcode generator. Fast, secure, and free."
+        title="ImageDocPro – Free Online Background Remover"
+        description="Remove backgrounds, upscale images, convert documents, compress files, and unlock PDFs — free, fast, and private in your browser."
         canonical="https://imagedocpro.com/"
         image="https://imagedocpro.com/uploads/logo2.jpg"
         type="website"
@@ -34,11 +34,11 @@ const Index = () => {
               <h1 className="text-4xl font-bold mb-8 text-white leading-tight">
                 ImageDocPro
               </h1>
-              <p className="text-xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
                 Free online background remover, image upscaler, file converter, and PDF password tools. Remove background from images online free with AI precision. 
                 Professional-grade tools for image processing, document conversion, and PDF security.
               </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4 text-white/80 justify-center max-w-2xl mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-white/80 justify-center max-w-2xl mx-auto">
                 <div className="flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-full">
                   <Scissors className="h-6 w-6" />
                   <span className="font-medium">AI Background Removal</span>

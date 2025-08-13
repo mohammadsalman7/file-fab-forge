@@ -9,7 +9,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center">
-              <img src="/uploads/logo.png" alt="ImageDocPro Logo" className="h-[50px] w-auto" />
+              <img src="/uploads/logo.png" alt="ImageDocProLogo" aria-label="ImageDocProLogo" title="ImageDocProLogo" aria-hidden="true" className="h-[50px] w-auto" />
             </div>
             <p className="text-sm text-muted-foreground">
               Professional AI-powered tools for image processing and file conversion. 
