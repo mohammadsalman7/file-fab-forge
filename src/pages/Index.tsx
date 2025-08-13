@@ -50,7 +50,7 @@ const Index = () => {
         </div>
 
         {/* Tools Grid */}
-        <div className="container mx-auto px-6 py-24">
+        <div className="container max-w-7xl mx-auto px-6 py-24">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-6 text-foreground">Our Professional Tools</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
