@@ -1,0 +1,6 @@
+# Authorized Digital Sellers for imagedocpro.com
+# Format: domain, publisher ID, relationship, certification authority ID
+
+google.com, pub-5022395460457488, DIRECT, f08c47fec0942fa0
+
+
