@@ -54,16 +54,16 @@ const Footer = () => {
         {/* Social Links & Copyright */}
         <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="flex space-x-4">
-            <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="https://www.facebook.com/share/17CrJU5TcS/" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Facebook className="h-5 w-5" />
             </a>
-            <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="https://www.instagram.com/imagedocpro?igsh=MWFjbTZ6MHZ3Zjcx" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Instagram className="h-5 w-5" />
             </a>
             <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Twitter className="h-5 w-5" />
             </a>
-            <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="https://youtube.com/@imagedocpro?si=C_s14Hsk-mqwMe-H" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Youtube className="h-5 w-5" />
             </a>
             <a href="https://www.linkedin.com/company/imagedocpro" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
