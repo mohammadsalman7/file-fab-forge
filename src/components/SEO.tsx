@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getSiteUrl } from '@/config/site';
 
 interface SEOProps {
   title: string;
@@ -66,7 +67,7 @@ export const SEO = ({
     setOrCreateMeta({ name: 'robots' }, noIndex ? 'noindex, nofollow' : 'index, follow');
 
     // Canonical
-    const url = canonical ?? window.location.href;
+    const url = canonical ? getSiteUrl(canonical) : window.location.href;
     setOrCreateLink('canonical', url);
 
     // Self-referential alternates
@@ -78,13 +79,13 @@ export const SEO = ({
     if (description) setOrCreateMeta({ property: 'og:description' }, description);
     setOrCreateMeta({ property: 'og:type' }, type);
     setOrCreateMeta({ property: 'og:url' }, url);
-    if (image) setOrCreateMeta({ property: 'og:image' }, image);
+    if (image) setOrCreateMeta({ property: 'og:image' }, getSiteUrl(image));
 
     // Twitter
     setOrCreateMeta({ name: 'twitter:card' }, image ? 'summary_large_image' : 'summary');
     setOrCreateMeta({ name: 'twitter:title' }, title);
     if (description) setOrCreateMeta({ name: 'twitter:description' }, description);
-    if (image) setOrCreateMeta({ name: 'twitter:image' }, image);
+    if (image) setOrCreateMeta({ name: 'twitter:image' }, getSiteUrl(image));
 
     // Structured Data
     const existing = document.getElementById('seo-ld-json');

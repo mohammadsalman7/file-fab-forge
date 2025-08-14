@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Layout from '@/components/layout/Layout';
 import { SEO } from '@/components/SEO';
+import { getSiteUrl } from '@/config/site';
 
 
 const Index = () => {
@@ -12,17 +13,17 @@ const Index = () => {
       <SEO
         title="ImageDocPro – Free Online Background Remover"
         description="Remove backgrounds, upscale images, convert documents, compress files, and unlock PDFs — free, fast, and private in your browser."
-        canonical="https://imagedocpro.com/"
-        image="https://imagedocpro.com/uploads/logo2.jpg"
+        canonical="/"
+        image="/uploads/logo2.jpg"
         type="website"
         structuredData={{
           '@context': 'https://schema.org',
           '@type': 'WebSite',
           name: 'ImageDocPro',
-          url: 'https://imagedocpro.com/',
+          url: getSiteUrl('/'),
           potentialAction: {
             '@type': 'SearchAction',
-            target: 'https://imagedocpro.com/?q={search_term_string}',
+            target: getSiteUrl('/?q={search_term_string}'),
             'query-input': 'required name=search_term_string',
           },
         }}
