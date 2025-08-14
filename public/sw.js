@@ -1,20 +1,33 @@
-const CACHE_NAME = 'file-fab-forge-v1';
+const CACHE_NAME = 'file-fab-forge-v2';
+
+// Resolve URLs relative to the SW registration scope so it works under subpaths
+const scopePathname = new URL('./', self.registration.scope).pathname;
+const withBase = (path) => `${scopePathname.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`;
+
+// Only include files that actually exist in dist by default
 const urlsToCache = [
-  '/',
-  '/manifest.json',
-  '/favicon.ico',
+  withBase(''), // scope root (e.g. / or /subpath/)
+  withBase('manifest.json'),
+  withBase('robots.txt'),
+  withBase('sitemap.xml'),
+  withBase('uploads/logo2.jpg'),
 ];
 
 // Install event
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
-    try {
-      const cache = await caches.open(CACHE_NAME);
-      await cache.addAll(urlsToCache);
-    } catch (err) {
-      // Ignore cache add failures (e.g., missing files in dev/hmr)
-      console.warn('[SW] cache.addAll failed:', err);
-    }
+    const cache = await caches.open(CACHE_NAME);
+    // Add each resource independently so one failure does not fail the entire install
+    await Promise.all(
+      urlsToCache.map(async (url) => {
+        try {
+          await cache.add(url);
+        } catch (err) {
+          // Silently skip missing/blocked resources to avoid noisy logs
+        }
+      })
+    );
+    self.skipWaiting();
   })());
 });
 
@@ -42,5 +55,6 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
+  self.clients.claim();
 });
 
