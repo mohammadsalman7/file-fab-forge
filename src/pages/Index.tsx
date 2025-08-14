@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Layout from '@/components/layout/Layout';
 import { SEO } from '@/components/SEO';
 
+
 const Index = () => {
   return (
     <Layout>
@@ -28,14 +29,14 @@ const Index = () => {
       />
       <div className="min-h-screen bg-gradient-secondary">
         {/* Header */}
-        <div className="relative overflow-hidden bg-gradient-primary">
+        <div className="relative overflow-hidden bg-gradient-primary" aria-label="ImageDocPro – Free Online Background Remover">
           <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 text-center">
             <div className="backdrop-blur-sm bg-white/10 rounded-3xl p-12 shadow-glass border border-white/20 max-w-5xl mx-auto">
               <h1 className="text-4xl font-bold mb-8 text-white leading-tight">
                 ImageDocPro
               </h1>
               <p className="text-base sm:text-xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
-                Free online background remover, image upscaler, file converter, and PDF password tools. Remove background from images online free with AI precision. 
+                Free online background remover, image upscaler, file converter, and PDF password tools. Remove background from images online free with AI precision.
                 Professional-grade tools for image processing, document conversion, and PDF security.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-white/80 justify-center max-w-2xl mx-auto">
@@ -64,20 +65,20 @@ const Index = () => {
                   <span className="font-medium">QR & Barcode Generator</span>
                 </div>
               </div>
-              
+
             </div>
           </div>
         </div>
 
         {/* Tools Grid */}
-        <div id="tools" className="container max-w-7xl mx-auto px-6 py-24">
+        <div id="tools" className="container max-w-7xl mx-auto px-6 py-24" aria-label="Our Professional Tools">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-6 text-foreground">Our Professional Tools</h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Choose from our comprehensive suite of online tools designed to handle all your image and document processing needs
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto">
             <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col">
               <CardHeader className="pb-6 flex-shrink-0">
@@ -104,7 +105,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col">
+            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="Image Upscaler">
               <CardHeader className="pb-6 flex-shrink-0">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors flex-shrink-0">
@@ -129,7 +130,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col">
+            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="Document Converter">
               <CardHeader className="pb-6 flex-shrink-0">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors flex-shrink-0">
@@ -154,7 +155,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col">
+            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="File Compressor">
               <CardHeader className="pb-6 flex-shrink-0">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors flex-shrink-0">
@@ -179,7 +180,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col">
+            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="PDF Password Remover">
               <CardHeader className="pb-6 flex-shrink-0">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors flex-shrink-0">
@@ -204,7 +205,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col">
+            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="PDF Protector">
               <CardHeader className="pb-6 flex-shrink-0">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors flex-shrink-0">
@@ -229,7 +230,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col">
+            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="QR & Barcode Generator">
               <CardHeader className="pb-6 flex-shrink-0">
                 <div className="flex items-center space-x-4">
                   <div className="p-3 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors flex-shrink-0">
@@ -257,10 +258,10 @@ const Index = () => {
         </div>
 
         {/* SEO Content Section */}
-        <section className="container mx-auto px-6 py-16">
+        <section className="container mx-auto px-6 py-16" aria-label="Why Choose ImageDocPro? Why Choose ImageDocPro?"  >
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold mb-8 text-center text-foreground">Why Choose ImageDocPro?</h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               <div className="text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -269,7 +270,7 @@ const Index = () => {
                 <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
                 <p className="text-muted-foreground">Process your files instantly with our optimized algorithms and cloud infrastructure.</p>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="h-8 w-8 text-primary" />
@@ -277,7 +278,7 @@ const Index = () => {
                 <h3 className="text-xl font-semibold mb-2">100% Free</h3>
                 <p className="text-muted-foreground">All our tools are completely free to use with no hidden costs or limitations.</p>
               </div>
-              
+
               <div className="text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="h-8 w-8 text-primary" />
@@ -290,20 +291,20 @@ const Index = () => {
             <div className="bg-card border rounded-lg p-8 mb-8">
               <h3 className="text-2xl font-bold mb-4">About Our Free Online Tools</h3>
               <p className="text-muted-foreground mb-4">
-                ImageDocPro provides a comprehensive suite of <strong>free online tools</strong> for image and document processing. 
-                Our <Link to="/background-remover" className="text-primary hover:underline">AI background remover</Link> uses advanced 
-                machine learning to remove backgrounds from images with precision. The <Link to="/image-upscaler" className="text-primary hover:underline">image upscaler</Link> 
+                ImageDocPro provides a comprehensive suite of <strong>free online tools</strong> for image and document processing.
+                Our <Link to="/background-remover" className="text-primary hover:underline">AI background remover</Link> uses advanced
+                machine learning to remove backgrounds from images with precision. The <Link to="/image-upscaler" className="text-primary hover:underline">image upscaler</Link>
                 enhances low-resolution images to HD quality using sophisticated AI algorithms.
               </p>
               <p className="text-muted-foreground mb-4">
-                For document management, our <Link to="/document-converter" className="text-primary hover:underline">document converter</Link> 
-                supports multiple formats including PDF, Word, Excel, and more. The <Link to="/file-compressor" className="text-primary hover:underline">file compressor</Link> 
-                reduces file sizes while maintaining quality. Our PDF tools include a <Link to="/pdf-password-remover" className="text-primary hover:underline">password remover</Link> 
+                For document management, our <Link to="/document-converter" className="text-primary hover:underline">document converter</Link>
+                supports multiple formats including PDF, Word, Excel, and more. The <Link to="/file-compressor" className="text-primary hover:underline">file compressor</Link>
+                reduces file sizes while maintaining quality. Our PDF tools include a <Link to="/pdf-password-remover" className="text-primary hover:underline">password remover</Link>
                 and <Link to="/pdf-protector" className="text-primary hover:underline">protector</Link> for secure document management.
               </p>
               <p className="text-muted-foreground">
-                Additionally, our <Link to="/code-generator" className="text-primary hover:underline">QR & barcode generator</Link> creates 
-                professional codes for various applications. All tools are designed to work seamlessly in your browser without requiring 
+                Additionally, our <Link to="/code-generator" className="text-primary hover:underline">QR & barcode generator</Link> creates
+                professional codes for various applications. All tools are designed to work seamlessly in your browser without requiring
                 any software installation.
               </p>
             </div>
@@ -323,7 +324,7 @@ const Index = () => {
                     <li>• Convert documents for different platforms</li>
                   </ul>
                 </div>
-                
+
                 <div>
                   <h4 className="text-lg font-semibold mb-3 flex items-center gap-2">
                     <Star className="h-5 w-5 text-primary" />
@@ -341,12 +342,57 @@ const Index = () => {
           </div>
         </section>
 
+
+		<section id="seo-content" aria-label="About ImageDocPro" className="container mx-auto px-6 py-16">
+			<div className="max-w-4xl mx-auto bg-card border rounded-2xl p-8 md:p-10 shadow-sm">
+				<h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">ImageDocPro — Free Background Remover & PDF Tools</h2>
+				<div className="prose prose-neutral dark:prose-invert max-w-none" aria-label="About ImageDocPro">
+					<p>
+						ImageDocPro is a fast, privacy‑first toolkit that runs in your browser. Use our free
+						background remover to erase backgrounds from photos in seconds, upscale images for sharper
+						results, convert documents between popular formats, compress large files, and work with
+						secure PDFs. Most tasks are processed locally on your device, so your files stay private and
+						never leave your computer. Whether you are preparing product photos, sharing study notes, or
+						sending documents at work, ImageDocPro helps you get professional results without installing
+						heavy software.
+					</p>
+
+					<h3 className="text-xl font-semibold mb-3" aria-label="What you can do" >What you can do</h3>
+					<p>
+						Remove or customize backgrounds with our background remover and background customizer. Make
+						blurry photos usable with the image upscaler. Convert files with the document converter, and
+						reduce file size using the file compressor while keeping clear quality for web and email.
+						Unlock or protect PDFs with the built‑in PDF tools: add passwords, remove passwords, and
+						manage permissions when needed. You can also generate code snippets, compare edits with a
+						before‑after view, and use manual editing for precise adjustments. Every tool is designed to
+						be simple, quick, and reliable on both desktop and mobile.
+					</p>
+
+					<h3 className="text-xl font-semibold mb-3" aria-label="Privacy, speed, and accessibility">Privacy, speed, and accessibility</h3>
+					<p>
+						Because ImageDocPro runs in the browser, many operations happen instantly, with no upload
+						delays and no waiting in queues. Your images and documents remain yours—private by default.
+						The interface is accessible and keyboard friendly, and works well across modern browsers.
+						Our mission is to provide free background remover and PDF tools that anyone can use safely,
+						without ads getting in the way of your work.
+					</p>
+
+					<h3 className="text-xl font-semibold mb-3" aria-label="Get started">Get started</h3>
+					<p>
+						Drag and drop a file onto the page or choose a tool from the menu to begin. If you are new,
+						start with the Background Remover to clean up product photos, then try the PDF Tools to
+						protect or unlock a document. ImageDocPro — Free Background Remover & PDF Tools — is built to
+						save you time, keep your files private, and deliver high‑quality results every day.
+					</p>
+				</div>
+			</div>
+		</section>
         {/* External Links Section */}
-        <section className="container mx-auto px-6 py-16">
+        <section className="container mx-auto px-6 py-16" aria-label="Resources & Support">
           <div className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold mb-8 text-center text-foreground">Resources & Support</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-card border rounded-lg p-6">
+              <div className="bg-card border rounded-lg p-6" aria-label="Help & Support">
                 <h3 className="text-xl font-semibold mb-3">Help & Support</h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li><Link to="/faq" className="text-primary hover:underline">Frequently Asked Questions</Link></li>
@@ -355,8 +401,8 @@ const Index = () => {
                   <li><Link to="/support" className="text-primary hover:underline">Technical Support</Link></li>
                 </ul>
               </div>
-              
-              <div className="bg-card border rounded-lg p-6">
+
+              <div className="bg-card border rounded-lg p-6" aria-label="Legal Information">
                 <h3 className="text-xl font-semibold mb-3">Legal Information</h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li><Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link></li>
@@ -364,8 +410,8 @@ const Index = () => {
                   <li><Link to="/cookies" className="text-primary hover:underline">Cookie Policy</Link></li>
                 </ul>
               </div>
-              
-              <div className="bg-card border rounded-lg p-6">
+
+              <div className="bg-card border rounded-lg p-6" aria-label="External Resources">
                 <h3 className="text-xl font-semibold mb-3">External Resources</h3>
                 <ul className="space-y-2 text-muted-foreground">
                   <li><a href="https://www.w3.org/TR/WCAG21/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Web Accessibility Guidelines</a></li>

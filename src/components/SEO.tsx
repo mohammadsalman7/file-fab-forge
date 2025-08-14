@@ -37,6 +37,17 @@ const setOrCreateLink = (rel: string, href: string) => {
   el.setAttribute('href', href);
 };
 
+const setOrCreateAlternate = (hreflang: string, href: string) => {
+  let el = document.head.querySelector<HTMLLinkElement>(`link[rel="alternate"][hreflang="${hreflang}"]`);
+  if (!el) {
+    el = document.createElement('link');
+    el.setAttribute('rel', 'alternate');
+    el.setAttribute('hreflang', hreflang);
+    document.head.appendChild(el);
+  }
+  el.setAttribute('href', href);
+};
+
 export const SEO = ({
   title,
   description,
@@ -57,6 +68,10 @@ export const SEO = ({
     // Canonical
     const url = canonical ?? window.location.href;
     setOrCreateLink('canonical', url);
+
+    // Self-referential alternates
+    setOrCreateAlternate('en', url);
+    setOrCreateAlternate('x-default', url);
 
     // Open Graph
     setOrCreateMeta({ property: 'og:title' }, title);
