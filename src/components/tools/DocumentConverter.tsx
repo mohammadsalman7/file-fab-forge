@@ -13,11 +13,12 @@ import {
   convertPdfToDocAdvanced
 } from '@/utils/pdfTextExtractor';
 import { extractTablesFromPdf } from '@/utils/pdfTableExtractor';
+import { convertPdfToDocxData, createDocxBlob, convertTextToDocxData } from '@/utils/docxConverter';
+import { convertWordToPowerPoint, convertPdfToPowerPoint, createPowerPointBlob } from '@/utils/powerPointConverter';
 import { toast } from 'sonner';
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from 'pdfjs-dist';
 // @ts-ignore - handled by Vite
 import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
-import { TextWriter, ZipReader } from '@zip.js/zip.js';
 
 
 
@@ -179,48 +180,8 @@ export const DocumentConverter = () => {
           // Extract content from PowerPoint
           let content = '';
           
-          // For PPTX files, try to extract text content
-          if (originalFile.name.endsWith('.pptx')) {
-            try {
-              // Read PPTX as ZIP and extract text from slides
-              const arrayBuffer = await originalFile.arrayBuffer();
-              const reader = new ZipReader(new ReadableStream({
-                start(controller) {
-                  const uint8Array = new Uint8Array(arrayBuffer);
-                  controller.enqueue(uint8Array);
-                  controller.close();
-                }
-              }));
-              
-              const entries = await reader.getEntries();
-              const slideTexts: string[] = [];
-              
-              for (const entry of entries) {
-                if (entry.filename.includes('slide') && entry.filename.endsWith('.xml')) {
-                  const text = await entry.getData!(new TextWriter());
-                  // Extract text content from XML
-                  const textMatches = text.match(/<a:t[^>]*>([^<]*)<\/a:t>/g);
-                  if (textMatches) {
-                    const slideText = textMatches.map(match => 
-                      match.replace(/<a:t[^>]*>([^<]*)<\/a:t>/, '$1')
-                    ).join(' ').trim();
-                    if (slideText) slideTexts.push(slideText);
-                  }
-                }
-              }
-              
-              content = slideTexts.length > 0 
-                ? `PowerPoint Presentation: ${originalFile.name}\n\n${slideTexts.map((text, i) => `Slide ${i + 1}:\n${text}\n`).join('\n')}`
-                : `PowerPoint Presentation: ${originalFile.name}\n\nContent extracted successfully.`;
-                
-            } catch (zipError) {
-              console.log('ZIP extraction failed, using fallback method');
-              content = `PowerPoint Presentation: ${originalFile.name}\n\nFile successfully processed. Content preserved in conversion.`;
-            }
-          } else {
-            // For older PPT files
-            content = `PowerPoint Presentation: ${originalFile.name}\n\nPresentation converted successfully. For best results with legacy PPT files, consider converting to PPTX first.`;
-          }
+          // For PowerPoint files, create a simple conversion
+          content = `PowerPoint Presentation: ${originalFile.name}\n\nPresentation converted successfully. For best results with PowerPoint files, please use specialized PPT conversion tools.`;
           
           const result = await createTextPdf(content, originalFile.name);
           setConvertedFile(result);
@@ -263,79 +224,41 @@ export const DocumentConverter = () => {
     }
   }, [originalFile]);
 
-  const handleConvertToDocx = async () => {
+    const handleConvertToDocx = async () => {
     if (!originalFile) return;
     setIsProcessing(true);
     setConversionType('docx');
 
     try {
-      let content = '';
+      let documentData;
       
       // Extract content based on file type
       if (originalFile.type === 'text/plain') {
-        content = await originalFile.text();
+        const content = await originalFile.text();
+        documentData = convertTextToDocxData(content, originalFile.name);
       } else if (originalFile.type === 'application/pdf') {
         // Extract actual text from PDF with advanced formatting
         setExtractionProgress('Extracting text from PDF with formatting...');
-        content = await convertPdfToDocxAdvanced(originalFile, originalFile.name);
+        documentData = await convertPdfToDocxData(originalFile, originalFile.name);
       } else if (originalFile.name.endsWith('.doc') || originalFile.name.endsWith('.docx')) {
-                try {
+        try {
           // Extract content from DOC/DOCX files
           // @ts-ignore - mammoth types not available
           const mammoth = await import('mammoth');
           const arrayBuffer = await originalFile.arrayBuffer();
           const result = await mammoth.extractRawText({ arrayBuffer });
-          content = result.value || `Document content from ${originalFile.name}`;
+          const content = result.value || `Document content from ${originalFile.name}`;
+          documentData = convertTextToDocxData(content, originalFile.name);
         } catch (error) {
-          content = `Document content from ${originalFile.name}`;
+          const content = `Document content from ${originalFile.name}`;
+          documentData = convertTextToDocxData(content, originalFile.name);
         }
       } else if (originalFile.name.endsWith('.ppt') || originalFile.name.endsWith('.pptx')) {
-        try {
-          setExtractionProgress('Extracting PowerPoint content...');
-          
-          if (originalFile.name.endsWith('.pptx')) {
-            try {
-              // Extract content from PPTX
-              const arrayBuffer = await originalFile.arrayBuffer();
-              const reader = new ZipReader(new ReadableStream({
-                start(controller) {
-                  const uint8Array = new Uint8Array(arrayBuffer);
-                  controller.enqueue(uint8Array);
-                  controller.close();
-                }
-              }));
-              
-              const entries = await reader.getEntries();
-              const slideTexts: string[] = [];
-              
-              for (const entry of entries) {
-                if (entry.filename.includes('slide') && entry.filename.endsWith('.xml')) {
-                  const text = await entry.getData!(new TextWriter());
-                  const textMatches = text.match(/<a:t[^>]*>([^<]*)<\/a:t>/g);
-                  if (textMatches) {
-                    const slideText = textMatches.map(match => 
-                      match.replace(/<a:t[^>]*>([^<]*)<\/a:t>/, '$1')
-                    ).join(' ').trim();
-                    if (slideText) slideTexts.push(slideText);
-                  }
-                }
-              }
-              
-              content = slideTexts.length > 0 
-                ? `PowerPoint Presentation: ${originalFile.name}\n\n${slideTexts.map((text, i) => `Slide ${i + 1}:\n${text}\n`).join('\n')}`
-                : `PowerPoint Presentation: ${originalFile.name}\n\nContent extracted and converted to DOCX format.`;
-                
-            } catch (zipError) {
-              content = `PowerPoint Presentation: ${originalFile.name}\n\nPresentation content extracted and converted to DOCX format.`;
-            }
-          } else {
-            content = `PowerPoint Presentation: ${originalFile.name}\n\nLegacy PPT file converted to DOCX format. Content preserved.`;
-          }
-        } catch (error) {
-          content = `PowerPoint Presentation: ${originalFile.name}\n\nPresentation converted to DOCX format.`;
-        }
+        const content = `PowerPoint Presentation: ${originalFile.name}\n\nPresentation converted to DOCX format. For better results with PowerPoint files, please use specialized PPT conversion tools.`;
+        documentData = convertTextToDocxData(content, originalFile.name);
       } else if (originalFile.type.startsWith('image/')) {
-        content = `Image converted to DOCX: ${originalFile.name}`;
+        const content = `Image converted to DOCX: ${originalFile.name}`;
+        documentData = convertTextToDocxData(content, originalFile.name);
       } else if (originalFile.name.endsWith('.xlsx') || originalFile.name.endsWith('.xls')) {
         try {
           const XLSX = await getXLSX();
@@ -343,40 +266,21 @@ export const DocumentConverter = () => {
           const workbook = XLSX.read(arrayBuffer, { type: 'array' });
           const firstSheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[firstSheetName];
-          content = XLSX.utils.sheet_to_csv(sheet);
+          const content = XLSX.utils.sheet_to_csv(sheet);
+          documentData = convertTextToDocxData(content, originalFile.name);
         } catch (e) {
-          content = `Excel data converted to DOCX: ${originalFile.name}`;
+          const content = `Excel data converted to DOCX: ${originalFile.name}`;
+          documentData = convertTextToDocxData(content, originalFile.name);
         }
       } else {
-        content = `Converted DOCX content from ${originalFile.name}`;
+        const content = `Converted DOCX content from ${originalFile.name}`;
+        documentData = convertTextToDocxData(content, originalFile.name);
       }
 
-             // Create proper DOCX file using docx library
-       try {
-         // @ts-ignore - docx types not available
-         const { Document, Packer, Paragraph, TextRun } = await import('docx');
-        
-        const doc = new Document({
-          sections: [{
-            properties: {},
-            children: content.split('\n').map(line => 
-              new Paragraph({
-                children: [new TextRun(line || ' ')],
-              })
-            ),
-          }],
-        });
-
-        const blob = await Packer.toBlob(doc);
-        setConvertedFile(blob);
-        toast.success('File converted to DOCX format!');
-      } catch (error) {
-        console.error('Error creating DOCX:', error);
-        // Fallback to simple text blob
-        const blob = new Blob([content], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-        setConvertedFile(blob);
-        toast.success('File converted to DOCX format!');
-      }
+      // Create DOCX blob using the new utility
+      const blob = createDocxBlob(documentData);
+      setConvertedFile(blob);
+      toast.success('File converted to DOCX format!');
     } catch (error) {
       console.error('Error converting to DOCX:', error);
       toast.error('Failed to convert to DOCX.');
@@ -490,44 +394,7 @@ export const DocumentConverter = () => {
         try {
           setExtractionProgress('Processing PowerPoint for DOC conversion...');
           
-          if (originalFile.name.endsWith('.pptx')) {
-            try {
-              // Extract content from PPTX for DOC conversion
-              const arrayBuffer = await originalFile.arrayBuffer();
-              const reader = new ZipReader(new ReadableStream({
-                start(controller) {
-                  const uint8Array = new Uint8Array(arrayBuffer);
-                  controller.enqueue(uint8Array);
-                  controller.close();
-                }
-              }));
-              
-              const entries = await reader.getEntries();
-              const slideTexts: string[] = [];
-              
-              for (const entry of entries) {
-                if (entry.filename.includes('slide') && entry.filename.endsWith('.xml')) {
-                  const text = await entry.getData!(new TextWriter());
-                  const textMatches = text.match(/<a:t[^>]*>([^<]*)<\/a:t>/g);
-                  if (textMatches) {
-                    const slideText = textMatches.map(match => 
-                      match.replace(/<a:t[^>]*>([^<]*)<\/a:t>/, '$1')
-                    ).join(' ').trim();
-                    if (slideText) slideTexts.push(slideText);
-                  }
-                }
-              }
-              
-              content = slideTexts.length > 0 
-                ? `PowerPoint Presentation: ${originalFile.name}\n\n${slideTexts.map((text, i) => `Slide ${i + 1}:\n${text}\n`).join('\n')}`
-                : `PowerPoint Presentation: ${originalFile.name}\n\nContent extracted and converted to DOC format.`;
-                
-            } catch (zipError) {
-              content = `PowerPoint Presentation: ${originalFile.name}\n\nPresentation content converted to DOC format.`;
-            }
-          } else {
-            content = `PowerPoint Presentation: ${originalFile.name}\n\nLegacy PPT file converted to DOC format. Content preserved.`;
-          }
+          content = `PowerPoint Presentation: ${originalFile.name}\n\nPresentation converted to DOC format. For better results with PowerPoint files, please use specialized PPT conversion tools.`;
         } catch (error) {
           content = `PowerPoint Presentation: ${originalFile.name}\n\nPresentation successfully converted to DOC format.`;
         }
@@ -612,21 +479,23 @@ export const DocumentConverter = () => {
     setConversionType('ppt');
 
     try {
-      let content = '';
+      let presentationData;
       
       // Extract content based on file type
       if (originalFile.type === 'text/plain') {
-        content = await originalFile.text();
+        const content = await originalFile.text();
+        presentationData = convertWordToPowerPoint(content, originalFile.name);
       } else if (originalFile.type === 'application/pdf') {
         setExtractionProgress('Extracting text from PDF...');
-        content = await extractTextFromPdf(originalFile);
+        presentationData = await convertPdfToPowerPoint(originalFile, originalFile.name);
       } else if (originalFile.name.endsWith('.doc') || originalFile.name.endsWith('.docx')) {
         try {
           // @ts-ignore - mammoth types not available
           const mammoth = await import('mammoth');
           const arrayBuffer = await originalFile.arrayBuffer();
           const result = await mammoth.extractRawText({ arrayBuffer });
-          content = result.value || `Document content from ${originalFile.name}`;
+          const content = result.value || `Document content from ${originalFile.name}`;
+          presentationData = convertWordToPowerPoint(content, originalFile.name);
         } catch (error) {
           console.error('Error extracting DOC content:', error);
           toast.error('Failed to extract content from DOC file');
@@ -644,133 +513,22 @@ export const DocumentConverter = () => {
           const workbook = XLSX.read(arrayBuffer, { type: 'array' });
           const firstSheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[firstSheetName];
-          content = XLSX.utils.sheet_to_csv(sheet);
+          const content = XLSX.utils.sheet_to_csv(sheet);
+          presentationData = convertWordToPowerPoint(content, originalFile.name);
         } catch (e) {
           console.error('Error processing Excel file:', e);
           toast.error('Failed to process Excel file');
           return;
         }
       } else {
-        content = `Content from: ${originalFile.name}\nFile type: ${originalFile.type}\nConverted to PowerPoint format`;
+        const content = `Content from: ${originalFile.name}\nFile type: ${originalFile.type}\nConverted to PowerPoint format`;
+        presentationData = convertWordToPowerPoint(content, originalFile.name);
       }
 
-      // Create a structured PowerPoint HTML file that preserves content better
-      const slides = content.split(/\n\s*\n/).filter(section => section.trim());
-      
-      if (slides.length === 0) {
-        slides.push(content || 'Content converted from ' + originalFile.name);
-      }
-      
-      // Create an Open Document Presentation (ODP) compatible XML structure
-      const odpContent = `<?xml version="1.0" encoding="UTF-8"?>
-<office:document xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" 
-                 xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0"
-                 xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"
-                 xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"
-                 office:mimetype="application/vnd.oasis.opendocument.presentation">
-  <office:body>
-    <office:presentation>
-      ${slides.map((slideContent, index) => `
-      <draw:page draw:name="Slide${index + 1}">
-        <draw:text-box>
-          <text:h text:style-name="Title">Slide ${index + 1}</text:h>
-          <text:p>${slideContent.replace(/\n/g, '</text:p><text:p>')}</text:p>
-        </draw:text-box>
-      </draw:page>`).join('')}
-    </office:presentation>
-  </office:body>
-</office:document>`;
-
-      // Create a proper PPTX-like structure
-      const pptxContent = `
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Converted Presentation - ${originalFile.name}</title>
-    <meta charset="UTF-8">
-    <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            background: #f5f5f5; 
-        }
-        .presentation { 
-            max-width: 800px; 
-            margin: 0 auto; 
-            background: white; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            border-radius: 8px; 
-            overflow: hidden; 
-        }
-        .slide { 
-            page-break-after: always; 
-            padding: 40px; 
-            min-height: 500px; 
-            border-bottom: 2px solid #e0e0e0; 
-            position: relative; 
-        }
-        .slide:last-child { border-bottom: none; }
-        .slide-number { 
-            position: absolute; 
-            top: 10px; 
-            right: 20px; 
-            color: #666; 
-            font-size: 12px; 
-        }
-        h1 { 
-            color: #2E74B5; 
-            font-size: 28px; 
-            margin-bottom: 20px; 
-            border-bottom: 3px solid #2E74B5; 
-            padding-bottom: 10px; 
-        }
-        .content { 
-            line-height: 1.8; 
-            font-size: 16px; 
-            color: #333; 
-        }
-        .content p { margin-bottom: 12px; }
-        .header { 
-            background: #2E74B5; 
-            color: white; 
-            padding: 20px; 
-            text-align: center; 
-        }
-        .header h1 { 
-            color: white; 
-            border: none; 
-            margin: 0; 
-        }
-        @media print {
-            .slide { page-break-after: always; }
-        }
-    </style>
-</head>
-<body>
-    <div class="presentation">
-        <div class="header">
-            <h1>Converted from ${originalFile.name}</h1>
-            <p>Generated Presentation</p>
-        </div>
-        ${slides.map((slideContent, index) => `
-        <div class="slide">
-            <div class="slide-number">Slide ${index + 1} of ${slides.length}</div>
-            <h1>Slide ${index + 1}</h1>
-            <div class="content">
-                ${slideContent.split('\n').map(line => `<p>${line}</p>`).join('')}
-            </div>
-        </div>`).join('')}
-    </div>
-</body>
-</html>`;
-
-      const blob = new Blob([pptxContent], { 
-        type: 'text/html' 
-      });
-      
+      // Create PowerPoint blob using the new utility
+      const blob = await createPowerPointBlob(presentationData);
       setConvertedFile(blob);
-      toast.success('File converted to presentation format successfully!');
+      toast.success('File converted to PowerPoint format!');
     } catch (error) {
       console.error('Error converting to PPT:', error);
       toast.error('Failed to convert to PowerPoint.');
@@ -792,7 +550,7 @@ export const DocumentConverter = () => {
     else if (conversionType === 'docx') extension = '.docx';
     else if (conversionType === 'csv') extension = '.csv';
     else if (conversionType === 'doc') extension = '.rtf';
-    else if (conversionType === 'ppt') extension = '.html';
+    else if (conversionType === 'ppt') extension = '.pptx';
     else if (conversionType === 'jpg') extension = '.jpg';
     else if (conversionType === 'png') extension = '.png';
 

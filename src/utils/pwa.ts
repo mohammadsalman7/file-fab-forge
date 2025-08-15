@@ -10,9 +10,12 @@ export class PWAManager {
   private static instance: PWAManager;
   private updateAvailable = false;
   private offlineReady = false;
+  private deferredPrompt: any = null;
+  private installButton: HTMLElement | null = null;
 
   private constructor() {
     this.setupEventListeners();
+    this.setupInstallPrompt();
   }
 
   static getInstance(): PWAManager {
@@ -27,6 +30,37 @@ export class PWAManager {
     window.addEventListener('vite-pwa:update-found', this.handleUpdateFound.bind(this));
     window.addEventListener('vite-pwa:offline-ready', this.handleOfflineReady.bind(this));
     window.addEventListener('vite-pwa:need-refresh', this.handleNeedRefresh.bind(this));
+  }
+
+  private setupInstallPrompt(): void {
+    // Listen for the beforeinstallprompt event
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log('beforeinstallprompt event fired');
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later
+      this.deferredPrompt = e;
+      // Update UI to notify the user they can install the PWA
+      this.updateInstallButton();
+    });
+
+    // Listen for app installed event
+    window.addEventListener('appinstalled', (evt) => {
+      console.log('PWA was installed');
+      this.deferredPrompt = null;
+      this.updateInstallButton();
+    });
+  }
+
+  private updateInstallButton(): void {
+    // This will be called when the install button should be shown/hidden
+    const event = new CustomEvent('pwa-install-state-changed', {
+      detail: {
+        canInstall: this.canInstallPWA(),
+        isInstalled: this.isPWAInstalled()
+      }
+    });
+    window.dispatchEvent(event);
   }
 
   private handleUpdateFound(event: PWAUpdateEvent): void {
@@ -92,38 +126,38 @@ export class PWAManager {
    * Install PWA (show install prompt)
    */
   async installPWA(): Promise<boolean> {
-    if (!('BeforeInstallPromptEvent' in window)) {
+    if (!this.deferredPrompt) {
+      console.log('No deferred prompt available');
       return false;
     }
 
-    // Wait for the beforeinstallprompt event
-    return new Promise((resolve) => {
-      const handleBeforeInstallPrompt = (event: any) => {
-        event.preventDefault();
-        event.prompt();
-        
-        event.userChoice.then((choiceResult: any) => {
-          resolve(choiceResult.outcome === 'accepted');
-        });
-        
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      };
-
-      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    try {
+      // Show the install prompt
+      this.deferredPrompt.prompt();
       
-      // Timeout after 5 seconds
-      setTimeout(() => {
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-        resolve(false);
-      }, 5000);
-    });
+      // Wait for the user to respond to the prompt
+      const { outcome } = await this.deferredPrompt.userChoice;
+      
+      console.log(`User response to the install prompt: ${outcome}`);
+      
+      // Clear the deferredPrompt variable
+      this.deferredPrompt = null;
+      
+      // Update the install button
+      this.updateInstallButton();
+      
+      return outcome === 'accepted';
+    } catch (error) {
+      console.error('Error during PWA installation:', error);
+      return false;
+    }
   }
 
   /**
    * Check if PWA can be installed
    */
   canInstallPWA(): boolean {
-    return 'BeforeInstallPromptEvent' in window;
+    return this.deferredPrompt !== null;
   }
 
   /**

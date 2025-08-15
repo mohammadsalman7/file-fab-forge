@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import Layout from "@/components/layout/Layout";
 import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
+import { PWAInstallButton } from "@/components/PWAInstallButton";
 
 // Lazy load all pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -24,6 +25,9 @@ const Support = lazy(() => import("./pages/Support"));
 const HelpCenter = lazy(() => import("./pages/HelpCenter"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+
+// PWA Test Page
+const PWATestPage = lazy(() => import("./components/PWATestPage").then(module => ({ default: module.PWATestPage })));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,11 +68,13 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/cookies" element={<Cookies />} />
+            <Route path="/pwa-test" element={<PWATestPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
         <ServiceWorkerStatus />
+        <PWAInstallButton />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

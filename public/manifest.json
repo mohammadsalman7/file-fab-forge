@@ -1,22 +1,50 @@
 {
-  "name": "ImageDocPro - Remove Background Online Free",
+  "name": "ImageDocPro - Free Online Image & PDF Tools",
   "short_name": "ImageDocPro",
-  "description": "Free online background remover, image upscaler, and file converter. Remove background from images online free with AI precision.",
+  "description": "Free online image processing tools with AI background remover, image upscaler, document converter, file compressor, and PDF password remover.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#3b82f6",
   "orientation": "portrait-primary",
+  "scope": "/",
   "icons": [
     {
-      "src": "/uploads/logo2.jpg",
-      "sizes": "16x16 32x32 48x48 64x64 128x128 256x256",
-      "type": "image/jpeg",
-      "purpose": "any maskable"
+      "src": "/uploads/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/uploads/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/uploads/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/uploads/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["productivity", "utilities", "photo"],
   "lang": "en",
-  "scope": "/",
-  "prefer_related_applications": false
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "screenshots": [
+    {
+      "src": "/uploads/logo.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
 }

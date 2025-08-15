@@ -30,33 +30,51 @@ export default defineConfig(({ mode }) => ({
           '**/uploads/d6e67793-e22c-4362-a794-c59496780b93.png',
           '**/uploads/4797c19b-882c-40ac-8c72-3df894830230.png'
         ],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        cleanupOutdatedCaches: true,
+        skipWaiting: true,
+        clientsClaim: true
       },
       manifest: {
         name: 'ImageDocPro - Free Online Image & PDF Tools',
         short_name: 'ImageDocPro',
         description: 'Free online image processing tools with AI background remover, image upscaler, document converter, file compressor, and PDF password remover.',
-        theme_color: '#ffffff',
+        theme_color: '#3b82f6',
         background_color: '#ffffff',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'portrait-primary',
         scope: '/',
         start_url: '/',
         icons: [
           {
             src: '/uploads/logo.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: '/uploads/logo.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
+          },
+          {
+            src: '/uploads/logo.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable'
+          },
+          {
+            src: '/uploads/logo.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable'
           }
         ],
         categories: ['productivity', 'utilities', 'photo'],
         lang: 'en',
-        dir: 'ltr'
+        dir: 'ltr',
+        prefer_related_applications: false
       }
     })
   ].filter(Boolean),
