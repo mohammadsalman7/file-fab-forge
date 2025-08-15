@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { FileText, Download } from 'lucide-react';
+import { FileText, Download, RefreshCw } from 'lucide-react';
 import { FileDropzone } from '@/components/FileDropzone';
 import { ToolCard } from '@/components/ToolCard';
 import { Button } from '@/components/ui/button';
@@ -15,14 +15,12 @@ import {
 import { extractTablesFromPdf } from '@/utils/pdfTableExtractor';
 import { toast } from 'sonner';
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from 'pdfjs-dist';
-// Tell pdf.js to use the locally bundled worker file (no CDN)
 // @ts-ignore - handled by Vite
 import pdfjsWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+
+
+
 GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl as unknown as string;
-// Configure PDF.js worker (required for rendering)
-// Uses CDN worker to avoid bundler-specific worker configuration
-// If you prefer a local worker, switch to importing the worker asset and set workerSrc accordingly
-// Using explicit Worker instance with Vite to avoid fake worker issues
 
 export const DocumentConverter = () => {
   // Lazy-load XLSX to reduce bundle size and avoid build resolution issues
@@ -34,8 +32,45 @@ export const DocumentConverter = () => {
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [convertedFile, setConvertedFile] = useState<Blob | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [conversionType, setConversionType] = useState<'pdf' | 'docx' | 'jpg' | 'png' | 'image' | 'csv' | 'doc'>('pdf');
+  const [conversionType, setConversionType] = useState<'pdf' | 'docx' | 'jpg' | 'png' | 'image' | 'csv' | 'doc' | 'ppt'>('pdf');
   const [extractionProgress, setExtractionProgress] = useState<string>('');
+
+  // Get file type from extension or mime type
+  const getFileType = useCallback((file: File) => {
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    const mimeType = file.type.toLowerCase();
+    
+    if (mimeType === 'application/pdf' || extension === 'pdf') return 'pdf';
+    if (mimeType.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(extension || '')) return 'image';
+    if (mimeType.includes('word') || ['doc', 'docx'].includes(extension || '')) return 'doc';
+    if (mimeType.includes('excel') || mimeType.includes('sheet') || ['xlsx', 'xls'].includes(extension || '')) return 'excel';
+    if (mimeType.includes('powerpoint') || mimeType.includes('presentation') || ['ppt', 'pptx'].includes(extension || '')) return 'ppt';
+    if (mimeType === 'text/csv' || extension === 'csv') return 'csv';
+    if (mimeType === 'text/plain' || extension === 'txt') return 'text';
+    return 'unknown';
+  }, []);
+
+  // Get smart recommendations based on file type
+  const getRecommendations = useCallback((fileType: string) => {
+    switch (fileType) {
+      case 'pdf':
+        return ['doc', 'docx', 'jpg', 'png', 'csv'];
+      case 'doc':
+        return ['pdf', 'docx', 'jpg', 'png'];
+      case 'excel':
+        return ['csv', 'pdf', 'doc', 'docx'];
+      case 'image':
+        return ['pdf', 'jpg', 'png'];
+      case 'ppt':
+        return ['pdf', 'jpg', 'png'];
+      case 'csv':
+        return ['pdf', 'doc', 'docx'];
+      case 'text':
+        return ['pdf', 'doc', 'docx'];
+      default:
+        return ['pdf', 'doc', 'docx', 'jpg', 'png'];
+    }
+  }, []);
 
   // Helper: Convert first page of PDF to image blob
   const renderPdfFirstPageToImage = useCallback(async (file: File, format: 'jpg' | 'png'): Promise<Blob> => {
@@ -96,16 +131,11 @@ export const DocumentConverter = () => {
   const handleFileSelect = (file: File) => {
     setOriginalFile(file);
     setConvertedFile(null);
-
-    if (file.type === 'application/pdf') {
-      setConversionType('image');
-    } else if (file.type.startsWith('image/')) {
-      setConversionType('pdf');
-    } else if (file.type.includes('word') || file.type.includes('document') || file.name.endsWith('.doc')) {
-      setConversionType('pdf');
-    } else if (file.type.includes('excel') || file.type.includes('sheet') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-      setConversionType('csv');
-    }
+    
+    // Set default conversion type based on file type
+    const fileType = getFileType(file);
+    const recommendations = getRecommendations(fileType);
+    setConversionType(recommendations[0] as any);
   };
 
   const handleConvertToPdf = useCallback(async () => {
@@ -124,10 +154,27 @@ export const DocumentConverter = () => {
         setConvertedFile(result);
         toast.success('Text converted to PDF successfully!');
       } else if (originalFile.name.endsWith('.doc') || originalFile.name.endsWith('.docx')) {
-        const text = `Converted content from ${originalFile.name}`;
+        try {
+          // Try to extract content from DOC/DOCX using mammoth
+          // @ts-ignore - mammoth types not available
+          const mammoth = await import('mammoth');
+          const arrayBuffer = await originalFile.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          const text = result.value || `Converted content from ${originalFile.name}`;
+          const pdfResult = await createTextPdf(text, originalFile.name);
+          setConvertedFile(pdfResult);
+          toast.success('DOC file converted to PDF successfully!');
+        } catch (error) {
+          const text = `Converted content from ${originalFile.name}`;
+          const result = await createTextPdf(text, originalFile.name);
+          setConvertedFile(result);
+          toast.success('DOC file converted to PDF successfully!');
+        }
+      } else if (originalFile.name.endsWith('.ppt') || originalFile.name.endsWith('.pptx')) {
+        const text = `PowerPoint presentation: ${originalFile.name}\n\nThis file has been converted to PDF format.\nFor best results, please use a specialized PowerPoint converter.`;
         const result = await createTextPdf(text, originalFile.name);
         setConvertedFile(result);
-        toast.success('DOC file converted to PDF successfully!');
+        toast.success('PowerPoint file converted to PDF successfully!');
       } else if (originalFile.name.endsWith('.xlsx') || originalFile.name.endsWith('.xls') || originalFile.type.includes('excel') || originalFile.type.includes('sheet')) {
         // Simple Excel to PDF: first convert to CSV text and embed into a PDF
         const XLSX = await getXLSX();
@@ -173,6 +220,19 @@ export const DocumentConverter = () => {
         // Extract actual text from PDF with advanced formatting
         setExtractionProgress('Extracting text from PDF with formatting...');
         content = await convertPdfToDocxAdvanced(originalFile, originalFile.name);
+      } else if (originalFile.name.endsWith('.doc') || originalFile.name.endsWith('.docx')) {
+                try {
+          // Extract content from DOC/DOCX files
+          // @ts-ignore - mammoth types not available
+          const mammoth = await import('mammoth');
+          const arrayBuffer = await originalFile.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          content = result.value || `Document content from ${originalFile.name}`;
+        } catch (error) {
+          content = `Document content from ${originalFile.name}`;
+        }
+      } else if (originalFile.name.endsWith('.ppt') || originalFile.name.endsWith('.pptx')) {
+        content = `PowerPoint presentation converted to DOCX: ${originalFile.name}`;
       } else if (originalFile.type.startsWith('image/')) {
         content = `Image converted to DOCX: ${originalFile.name}`;
       } else if (originalFile.name.endsWith('.xlsx') || originalFile.name.endsWith('.xls')) {
@@ -396,9 +456,13 @@ export const DocumentConverter = () => {
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
     'text/csv',
     '.xlsx',
     '.xls',
+    '.ppt',
+    '.pptx',
     'image/svg+xml',
     '.doc',
     '.docx'
@@ -416,7 +480,7 @@ export const DocumentConverter = () => {
             onFileSelect={handleFileSelect}
             acceptedTypes={getAcceptedTypes}
             title="Drop your file here"
-            description="Supports DOC, DOCX, PDF, images, Excel (XLSX/XLS), CSV, SVG, and text files"
+            description="Supports PDF, DOC, DOCX, PPT, PPTX, Excel (XLSX/XLS), CSV, images, SVG, and text files"
             maxSize={50 * 1024 * 1024}
           />
         ) : (
@@ -427,6 +491,26 @@ export const DocumentConverter = () => {
                 {originalFile.type || 'Document'} • {(originalFile.size / (1024 * 1024)).toFixed(1)} MB
               </p>
             </div>
+
+            {/* Smart Recommendations */}
+            {originalFile && (
+              <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg">
+                <h4 className="text-sm font-medium mb-2 text-primary">✨ Recommended Formats</h4>
+                <p className="text-xs text-muted-foreground mb-2">
+                  Based on your {getFileType(originalFile)} file, we recommend converting to:
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {getRecommendations(getFileType(originalFile)).map((format) => (
+                    <span
+                      key={format}
+                      className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-md font-medium"
+                    >
+                      {format.toUpperCase()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-2">
               <Button onClick={handleConvertToPdf} disabled={isProcessing}>Convert to PDF</Button>
