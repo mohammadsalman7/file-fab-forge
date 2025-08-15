@@ -49,25 +49,25 @@ export const convertPdfToDocxData = async (pdfBlob: Blob, fileName: string): Pro
           // Analyze text formatting based on content and position
           const isTitle = (
             line.length < 100 && 
-            (line.match(/^[A-Z][^.!?]*$/) || 
-             line.match(/^\d+\./) ||
+            (!!line.match(/^[A-Z][^.!?]*$/) || 
+             !!line.match(/^\d+\./) ||
              line.length < 50) &&
             lineIndex === 0
           );
           
           const isSubtitle = (
             line.length < 80 && 
-            line.match(/^[A-Z][^.!?]*$/) &&
+            !!line.match(/^[A-Z][^.!?]*$/) &&
             lineIndex === 1
           );
           
           const isHeader = (
-            line.match(/^[A-Z\s]{3,}$/) ||
-            line.match(/^Chapter\s+\d+/i) ||
-            line.match(/^Section\s+\d+/i)
+            !!line.match(/^[A-Z\s]{3,}$/) ||
+            !!line.match(/^Chapter\s+\d+/i) ||
+            !!line.match(/^Section\s+\d+/i)
           );
           
-          const isList = line.match(/^[\s]*[•\-\*]\s/) || line.match(/^[\s]*\d+\.\s/);
+          const isList = !!line.match(/^[\s]*[•\-\*]\s/) || !!line.match(/^[\s]*\d+\.\s/);
           
           paragraphs.push({
             text: line,
@@ -305,7 +305,7 @@ export const createDocxBlob = async (document: DocumentData): Promise<Blob> => {
   });
 
   const buffer = await Packer.toBuffer(doc);
-  return new Blob([buffer], {
+  return new Blob([new Uint8Array(buffer)], {
     type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   });
 };
@@ -347,13 +347,13 @@ export const convertTextToDocxData = (content: string, fileName: string): Docume
     lines.forEach((line, index) => {
       const isTitle = (
         line.length < 100 && 
-        (line.match(/^[A-Z][^.!?]*$/) || 
-         line.match(/^\d+\./) ||
+        (!!line.match(/^[A-Z][^.!?]*$/) || 
+         !!line.match(/^\d+\./) ||
          line.length < 50)
       );
       
-      const isHeader = line.match(/^[A-Z\s]{3,}$/) || line.match(/^Chapter\s+\d+/i);
-      const isList = line.match(/^[\s]*[•\-\*]\s/) || line.match(/^[\s]*\d+\.\s/);
+      const isHeader = !!line.match(/^[A-Z\s]{3,}$/) || !!line.match(/^Chapter\s+\d+/i);
+      const isList = !!line.match(/^[\s]*[•\-\*]\s/) || !!line.match(/^[\s]*\d+\.\s/);
       
       paragraphs.push({
         text: line,

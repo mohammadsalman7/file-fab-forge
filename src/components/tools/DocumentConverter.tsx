@@ -79,7 +79,7 @@ export const DocumentConverter = () => {
       case 'ppt':
         return ['pdf', 'doc', 'docx', 'jpg', 'png'];
       case 'csv':
-        return ['pdf', 'doc', 'docx', 'excel'];
+        return ['pdf', 'doc', 'docx'];
       case 'text':
         return ['pdf', 'doc', 'docx'];
       default:
@@ -256,7 +256,7 @@ export const DocumentConverter = () => {
         const content = `Converted DOCX content from ${originalFile.name}`;
         documentData = convertTextToDocxData(content, originalFile.name);
       }
-      const blob = createDocxBlob(documentData);
+      const blob = await createDocxBlob(documentData);
       setConvertedFile(blob);
       toast.success('File converted to DOCX format!');
     } catch (error) {
@@ -445,9 +445,46 @@ export const DocumentConverter = () => {
           return;
         }
       } else if (originalFile.name.endsWith('.ppt') || originalFile.name.endsWith('.pptx')) {
-        setConvertedFile(originalFile);
-        toast.success('PowerPoint file processed successfully!');
-        return;
+        try {
+          // Extract text from PowerPoint file
+          const arrayBuffer = await originalFile.arrayBuffer();
+          let extractedText = '';
+          
+          if (originalFile.name.endsWith('.pptx')) {
+            // For PPTX files, try to extract text using ZIP parsing
+            const JSZip = await import('@zip.js/zip.js');
+            const zipReader = new JSZip.ZipReader(new JSZip.BlobReader(originalFile));
+            const entries = await zipReader.getEntries();
+            
+            for (const entry of entries) {
+              if (entry.filename.includes('slide') && entry.filename.endsWith('.xml')) {
+                if (entry.getData) {
+                  const textWriter = new JSZip.TextWriter();
+                  const content = await entry.getData(textWriter);
+                  // Extract text from XML content
+                  const textMatches = content.match(/<a:t[^>]*>([^<]*)<\/a:t>/g);
+                  if (textMatches) {
+                    textMatches.forEach(match => {
+                      const text = match.replace(/<a:t[^>]*>([^<]*)<\/a:t>/, '$1');
+                      extractedText += text + '\n';
+                    });
+                  }
+                }
+              }
+            }
+            await zipReader.close();
+          }
+          
+          if (!extractedText.trim()) {
+            extractedText = `PowerPoint Presentation: ${originalFile.name}\n\nExtracted content from presentation slides.`;
+          }
+          
+          presentationData = convertWordToPowerPoint(extractedText, originalFile.name);
+        } catch (error) {
+          console.error('Error extracting PPT content:', error);
+          const content = `PowerPoint Presentation: ${originalFile.name}\n\nPresentation converted to PowerPoint format.`;
+          presentationData = convertWordToPowerPoint(content, originalFile.name);
+        }
       } else if (originalFile.name.endsWith('.xlsx') || originalFile.name.endsWith('.xls')) {
         try {
           const XLSX = await getXLSX();

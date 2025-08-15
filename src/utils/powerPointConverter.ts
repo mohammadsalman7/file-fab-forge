@@ -195,8 +195,8 @@ export const createPowerPointBlob = async (presentation: PresentationData): Prom
     });
     
     // Generate the PPTX file
-    const pptxBlob = await pptx.write('blob');
-    return pptxBlob;
+    const pptxBlob = await pptx.write({ outputType: 'blob' });
+    return pptxBlob as Blob;
   } catch (error) {
     console.error('Error creating PowerPoint with pptxgenjs:', error);
     
