@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import Layout from "@/components/layout/Layout";
 import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
-import { PWAInstallButton } from "@/components/PWAInstallButton";
+
 
 // Lazy load all pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -74,7 +74,7 @@ const App = () => (
           </Routes>
         </Suspense>
         <ServiceWorkerStatus />
-        <PWAInstallButton />
+       
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

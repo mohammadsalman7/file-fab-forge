@@ -60,11 +60,9 @@ export const PWAInstallButton = () => {
   // Don't show anything if PWA is already installed
   if (isInstalled) {
     return (
-      <div className="fixed top-4 right-4 z-50">
-        <div className="bg-green-500 text-white px-3 py-2 rounded-lg shadow-lg flex items-center space-x-2">
-          <Check className="h-4 w-4" />
-          <span className="text-sm font-medium">App Installed</span>
-        </div>
+      <div className="flex items-center space-x-2 text-green-600">
+        <Check className="h-4 w-4" />
+        <span className="text-sm font-medium">Installed</span>
       </div>
     );
   }
@@ -75,28 +73,15 @@ export const PWAInstallButton = () => {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50">
-      <div className="bg-blue-500 text-white px-4 py-3 rounded-lg shadow-lg">
-        <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2">
-            <Smartphone className="h-5 w-5" />
-            <div>
-              <p className="text-sm font-medium">Install ImageDocPro</p>
-              <p className="text-xs opacity-90">Use offline & get app-like experience</p>
-            </div>
-          </div>
-          <Button
-            onClick={handleInstall}
-            disabled={isInstalling}
-            size="sm"
-            variant="secondary"
-            className="bg-white text-blue-500 hover:bg-gray-100"
-          >
-            <Download className={`h-4 w-4 mr-1 ${isInstalling ? 'animate-spin' : ''}`} />
-            {isInstalling ? 'Installing...' : 'Install'}
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Button
+      onClick={handleInstall}
+      disabled={isInstalling}
+      size="sm"
+      variant="outline"
+      className="flex items-center space-x-2"
+    >
+      <Download className={`h-4 w-4 ${isInstalling ? 'animate-spin' : ''}`} />
+      <span>{isInstalling ? 'Installing...' : 'Install App'}</span>
+    </Button>
   );
 };

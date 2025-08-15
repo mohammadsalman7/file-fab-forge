@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { PWAInstallButton } from '../PWAInstallButton';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -14,6 +15,7 @@ const Header = () => {
     { name: 'Document Converter', href: '/document-converter' },
     { name: 'File Compressor', href: '/file-compressor' },
     { name: 'PDF Unlock', href: '/pdf-password-remover' },
+
     // { name: 'PDF Protector', href: '/pdf-protector' },
   ];
 
@@ -39,8 +41,10 @@ const Header = () => {
                 }`}
               >
                 {item.name}
+                
               </Link>
             ))}
+            <PWAInstallButton />
           </nav>
 
           {/* Mobile Menu Button */}
@@ -71,6 +75,7 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
+            <PWAInstallButton />
           </nav>
         )}
       </div>
