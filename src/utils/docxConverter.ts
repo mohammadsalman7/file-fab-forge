@@ -291,10 +291,22 @@ export const generateDocxHtml = (document: DocumentData): string => {
  * @param document - The document data
  * @returns Blob - DOCX file as blob
  */
-export const createDocxBlob = (document: DocumentData): Blob => {
-  const htmlContent = generateDocxHtml(document);
-  return new Blob([htmlContent], { 
-    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' 
+// Example of how a proper library would work
+import { Document, Paragraph, TextRun, Packer } from 'docx';
+
+export const createDocxBlob = async (document: DocumentData): Promise<Blob> => {
+  const doc = new Document({
+    sections: document.sections.map(section => ({
+      children: section.paragraphs.map(p => new Paragraph({
+        children: [new TextRun(p.text)],
+        // Apply other formatting properties here
+      }))
+    })),
+  });
+
+  const buffer = await Packer.toBuffer(doc);
+  return new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   });
 };
 
