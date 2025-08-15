@@ -22,7 +22,7 @@ const documentConverterFAQs = [
   },
   {
     question: "Will the formatting of my document be preserved?",
-    answer: "Our converter is designed to retain formatting, fonts, and layout as accurately as possible."
+    answer: "Our converter is designed to retain formatting, fonts, and layout as accurately as possible. For PDF to PowerPoint conversion, we offer an image-based option that preserves the exact design by converting each PDF page to an image."
   },
   {
     question: "Can I convert scanned PDFs to editable text?",
@@ -31,6 +31,10 @@ const documentConverterFAQs = [
   {
     question: "Can I convert multiple files at once?",
     answer: "Yes, batch conversion is supported depending on the file type."
+  },
+  {
+    question: "What is image-based PDF to PowerPoint conversion?",
+    answer: "This feature converts each PDF page to a high-quality image and creates PowerPoint slides with those images. This preserves the exact design, fonts, colors, and layout of your original PDF, making it perfect for presentations that need to maintain the original appearance."
   }
 ];
 
@@ -103,7 +107,7 @@ const DocumentConverterPage = () => {
               Convert Any File to Any Format — Instantly!
             </h1>
             <p className="text-lg text-white/90 max-w-2xl">
-              Our document converter supports a wide range of formats, letting you transform your files in seconds. Whether it's Word to PDF, DOC/DOCX to Excel or JPG, Excel to PDF, PDF to Word/Excel/JPG/PNG, or JPG to PDF/Word/PNG/JPEG — we've got you covered. Fast, secure, and easy to use — just upload your file and get your desired format in one click.
+              Our document converter supports a wide range of formats, letting you transform your files in seconds. Whether it's Word to PDF, DOC/DOCX to Excel or JPG, Excel to PDF, PDF to Word/Excel/JPG/PNG, or JPG to PDF/Word/PNG/JPEG — we've got you covered. For PDF to PowerPoint conversion, we offer image-based conversion that preserves exact design and layout. Fast, secure, and easy to use — just upload your file and get your desired format in one click.
             </p>
           </div>
         </div>

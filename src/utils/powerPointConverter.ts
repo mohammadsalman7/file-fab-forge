@@ -1,9 +1,11 @@
 import { extractTextFromPdf } from './pdfTextExtractor';
+import { convertPdfPagesToImages, type PageImage } from './pdfToImageConverter';
 
 interface SlideContent {
   title: string;
   content: string[];
   type: 'title' | 'content' | 'bullet' | 'image';
+  imageBlob?: Blob; // For image-based slides
 }
 
 interface PresentationData {
@@ -147,6 +149,54 @@ export const convertPdfToPowerPoint = async (pdfBlob: Blob, fileName: string): P
 };
 
 /**
+ * Convert PDF pages to PowerPoint presentation with images (preserves exact design)
+ * @param pdfBlob - The PDF file as a Blob
+ * @param fileName - Original file name
+ * @returns Promise<PresentationData> - Structured presentation data with images
+ */
+export const convertPdfToPowerPointWithImages = async (pdfBlob: Blob, fileName: string): Promise<PresentationData> => {
+  try {
+    console.log('Converting PDF to PowerPoint with images to preserve exact design...');
+    
+    // Convert PDF pages to images
+    const pageImages = await convertPdfPagesToImages(pdfBlob, { dpi: 200 }); // High quality rendering
+    
+    const slides: SlideContent[] = [];
+    
+    // Create one slide per PDF page with the image (no extra text)
+    pageImages.forEach((pageImage, index) => {
+      console.log(`Creating slide for page ${pageImage.pageNumber}, image size: ${pageImage.imageBlob.size} bytes`);
+      
+      // Verify image blob is valid
+      if (pageImage.imageBlob.size === 0) {
+        console.error(`Page ${pageImage.pageNumber} has empty image blob`);
+      }
+      
+      slides.push({
+        title: `Page ${pageImage.pageNumber}`,
+        content: [], // No extra text content
+        type: 'image',
+        imageBlob: pageImage.imageBlob
+      });
+    });
+
+    return {
+      title: `Presentation from ${fileName} (Image-based)`,
+      slides,
+      metadata: {
+        author: 'Document Converter',
+        date: new Date().toLocaleDateString(),
+        totalSlides: slides.length,
+        fileName
+      }
+    };
+  } catch (error) {
+    console.error('Error converting PDF to PowerPoint with images:', error);
+    throw new Error('Failed to convert PDF to PowerPoint with images');
+  }
+};
+
+/**
  * Create a PowerPoint file blob from presentation data
  * @param presentation - The presentation data
  * @returns Promise<Blob> - PowerPoint file as blob
@@ -164,35 +214,96 @@ export const createPowerPointBlob = async (presentation: PresentationData): Prom
     pptx.subject = `Converted from ${presentation.metadata.fileName}`;
     
     // Create slides
-    presentation.slides.forEach((slide, index) => {
+    for (let index = 0; index < presentation.slides.length; index++) {
+      const slide = presentation.slides[index];
       const pptxSlide = pptx.addSlide();
       
-      // Add title
-      pptxSlide.addText(slide.title, {
-        x: 0.5,
-        y: 0.5,
-        w: 9,
-        h: 1,
-        fontSize: 24,
-        bold: true,
-        color: '2E74B5',
-        align: 'center'
-      });
-      
-      // Add content
-      if (slide.content.length > 0) {
-        const contentText = slide.content.join('\n');
-        pptxSlide.addText(contentText, {
+      // Handle image-based slides (PDF pages converted to images)
+      if (slide.type === 'image' && slide.imageBlob) {
+        try {
+          console.log(`Processing slide ${index + 1}, image size: ${slide.imageBlob.size} bytes`);
+          
+          // Try different approaches for image data
+          let imageData;
+          
+          try {
+            // Method 1: Try base64 conversion
+            const arrayBuffer = await slide.imageBlob.arrayBuffer();
+            const uint8Array = new Uint8Array(arrayBuffer);
+            
+            // Convert to base64 properly
+            let base64 = '';
+            for (let i = 0; i < uint8Array.length; i++) {
+              base64 += String.fromCharCode(uint8Array[i]);
+            }
+            base64 = btoa(base64);
+            
+            console.log(`Base64 length: ${base64.length} characters`);
+            imageData = `data:image/png;base64,${base64}`;
+          } catch (base64Error) {
+            console.error('Base64 conversion failed:', base64Error);
+            
+            // Method 2: Try URL.createObjectURL
+            try {
+              const imageUrl = URL.createObjectURL(slide.imageBlob);
+              imageData = imageUrl;
+              console.log('Using object URL:', imageUrl);
+            } catch (urlError) {
+              console.error('URL creation failed:', urlError);
+              throw new Error('Failed to process image data');
+            }
+          }
+          
+          // Add image to fill entire slide (no text, no title)
+          pptxSlide.addImage({
+            data: imageData,
+            x: 0,
+            y: 0,
+            w: 10,
+            h: 7.5,
+            sizing: { type: 'contain', w: 10, h: 7.5 }
+          });
+        } catch (imageError) {
+          console.error('Error adding image to slide:', imageError);
+          // Add fallback text to show there was an error
+          pptxSlide.addText(`Error loading page ${slide.title}`, {
+            x: 0.5,
+            y: 3,
+            w: 9,
+            h: 1,
+            fontSize: 16,
+            color: 'FF0000',
+            align: 'center'
+          });
+        }
+      } else {
+        // Add title for non-image slides
+        pptxSlide.addText(slide.title, {
           x: 0.5,
-          y: 2,
+          y: 0.5,
           w: 9,
-          h: 5,
-          fontSize: 14,
-          color: '000000',
-          align: 'left'
+          h: 1,
+          fontSize: 24,
+          bold: true,
+          color: '2E74B5',
+          align: 'center'
         });
+        
+        // Add regular text content
+        if (slide.content.length > 0) {
+          const contentText = slide.content.join('\n');
+          pptxSlide.addText(contentText, {
+            x: 0.5,
+            y: 2,
+            w: 9,
+            h: 5,
+            fontSize: 14,
+            color: '000000',
+            align: 'left'
+          });
+        }
       }
-    });
+    }
     
     // Generate the PPTX file
     const pptxBlob = await pptx.write({ outputType: 'blob' });

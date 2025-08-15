@@ -10,7 +10,7 @@ import {
 } from '@/utils/pdfTextExtractor';
 import { extractTablesFromPdf } from '@/utils/pdfTableExtractor';
 import { convertPdfToDocxData, createDocxBlob, convertTextToDocxData } from '@/utils/docxConverter';
-import { convertWordToPowerPoint, convertPdfToPowerPoint, createPowerPointBlob } from '@/utils/powerPointConverter';
+import { convertWordToPowerPoint, convertPdfToPowerPoint, convertPdfToPowerPointWithImages, createPowerPointBlob } from '@/utils/powerPointConverter';
 import { toast } from 'sonner';
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from 'pdfjs-dist';
 // @ts-ignore - handled by Vite
@@ -31,6 +31,7 @@ export const DocumentConverter = () => {
   const [conversionType, setConversionType] = useState<'pdf' | 'docx' | 'jpg' | 'png' | 'image' | 'csv' | 'doc' | 'ppt'>('pdf');
   const [extractionProgress, setExtractionProgress] = useState<string>('');
   const [recommendedFormats, setRecommendedFormats] = useState<string[]>([]);
+  const [useImageBasedConversion, setUseImageBasedConversion] = useState(false);
 
   // Get file type from extension or mime type
   const getFileType = useCallback((file: File) => {
@@ -430,8 +431,13 @@ export const DocumentConverter = () => {
         const content = await originalFile.text();
         presentationData = convertWordToPowerPoint(content, originalFile.name);
       } else if (originalFile.type === 'application/pdf') {
-        setExtractionProgress('Extracting text from PDF...');
-        presentationData = await convertPdfToPowerPoint(originalFile, originalFile.name);
+        if (useImageBasedConversion) {
+          setExtractionProgress('Converting PDF pages to images for exact design preservation...');
+          presentationData = await convertPdfToPowerPointWithImages(originalFile, originalFile.name);
+        } else {
+          setExtractionProgress('Extracting text from PDF...');
+          presentationData = await convertPdfToPowerPoint(originalFile, originalFile.name);
+        }
       } else if (originalFile.name.endsWith('.doc') || originalFile.name.endsWith('.docx')) {
         try {
           const mammoth = await import('mammoth');
@@ -593,6 +599,27 @@ export const DocumentConverter = () => {
                 </div>
               </div>
             )}
+            {originalFile.type === 'application/pdf' && recommendedFormats.includes('ppt') && (
+              <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-sm font-medium mb-1 text-orange-400">🎨 Preserve Exact Design</h4>
+                    <p className="text-xs text-muted-foreground">
+                      Convert PDF pages to images to maintain exact layout, fonts, and design
+                    </p>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={useImageBasedConversion}
+                      onChange={(e) => setUseImageBasedConversion(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-500"></div>
+                  </label>
+                </div>
+              </div>
+            )}
             <div className="grid grid-cols-2 gap-2">
               {recommendedFormats.includes('pdf') && (
                 <Button onClick={handleConvertToPdf} disabled={isProcessing}>Convert to PDF</Button>
@@ -604,7 +631,9 @@ export const DocumentConverter = () => {
                 <Button onClick={handleConvertToDoc} disabled={isProcessing}>Convert to DOC</Button>
               )}
               {recommendedFormats.includes('ppt') && (
-                <Button onClick={handleConvertToPpt} disabled={isProcessing}>Convert to PPT</Button>
+                <Button onClick={handleConvertToPpt} disabled={isProcessing}>
+                  {useImageBasedConversion && originalFile?.type === 'application/pdf' ? 'Convert to PPT (Image-based)' : 'Convert to PPT'}
+                </Button>
               )}
               {recommendedFormats.includes('csv') && (
                 <Button onClick={handleConvertToCsv} disabled={isProcessing}>Convert to CSV</Button>

@@ -11,6 +11,7 @@ A modern, AI-powered web application for professional image processing and docum
 
 ### 📄 Document Conversion
 - **PDF Converter**: Convert various file formats to PDF and vice versa
+- **PDF to PowerPoint**: Convert PDFs to PowerPoint presentations with text extraction or image-based conversion for exact design preservation
 - **File Compression**: Reduce file sizes while maintaining quality
 - **Multi-format Support**: Handle images, documents, and more
 
@@ -88,6 +89,9 @@ src/
 ### Document Conversion
 - PDF to image conversion
 - Image to PDF conversion
+- PDF to PowerPoint conversion with two modes:
+  - Text-based: Extracts text and creates structured slides
+  - Image-based: Converts each PDF page to an image for exact design preservation
 - Multiple format support
 - Compression options
 
