@@ -94,7 +94,7 @@ const Contact = () => {
           <div className="container mx-auto px-6 py-8">
             <div className="flex items-center space-x-4 mb-4">
               <Link to="/">
-                <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
+                <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Home
                 </Button>

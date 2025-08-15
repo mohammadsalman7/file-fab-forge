@@ -2,7 +2,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
-import logo from '@/assets/logo.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -13,6 +12,9 @@ const Header = () => {
     { name: 'Background Remover', href: '/background-remover' },
     { name: 'Image Upscaler', href: '/image-upscaler' },
     { name: 'Document Converter', href: '/document-converter' },
+    { name: 'File Compressor', href: '/file-compressor' },
+    { name: 'PDF Unlock', href: '/pdf-password-remover' },
+    // { name: 'PDF Protector', href: '/pdf-protector' },
   ];
 
   return (
@@ -21,16 +23,16 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img src="/lovable-uploads/d6e67793-e22c-4362-a794-c59496780b93.png" alt="Remove Background Logo" className="h-24 w-auto" />
+            <img src="/uploads/logo.png" alt="ImageDocProLogo" title="ImageDocProLogo" aria-hidden="true" className="h-[40px] sm:h-[50px] w-auto" />
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden lg:flex items-center space-x-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-sm font-medium transition-colors hover:text-primary ${
+                className={`text-base font-medium transition-colors hover:text-primary ${
                   location.pathname === item.href
                     ? 'text-primary'
                     : 'text-muted-foreground'
@@ -45,16 +47,16 @@ const Header = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="md:hidden"
+            className="lg:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMenuOpen ? <X className="h-7 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <nav className="md:hidden mt-4 pb-4 space-y-2">
+          <nav className="lg:hidden mt-4 pb-4 space-y-2">
             {navigation.map((item) => (
               <Link
                 key={item.name}
