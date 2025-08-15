@@ -43,15 +43,46 @@ export const DocumentConverter = () => {
     const extension = file.name.split('.').pop()?.toLowerCase();
     const mimeType = file.type.toLowerCase();
     
-    if (mimeType === 'application/pdf' || extension === 'pdf') return 'pdf';
-    if (mimeType.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(extension || '')) return 'image';
-    if (mimeType.includes('word') || ['doc', 'docx'].includes(extension || '')) return 'doc';
-    if (mimeType.includes('excel') || mimeType.includes('sheet') || ['xlsx', 'xls'].includes(extension || '')) return 'excel';
-    if (mimeType.includes('powerpoint') || mimeType.includes('presentation') || ['ppt', 'pptx'].includes(extension || '')) return 'ppt';
-    if (mimeType === 'text/csv' || extension === 'csv') return 'csv';
-    if (mimeType === 'text/plain' || extension === 'txt') return 'text';
-    return 'unknown';
-  }, []);
+  const getFileType = useCallback((file: File) => {
+  const extension = file.name.split('.').pop()?.toLowerCase();
+  const mimeType = file.type.toLowerCase();
+
+  // Explicitly check MIME type first for robustness, then fall back to extension
+  if (mimeType === 'application/pdf' || extension === 'pdf') return 'pdf';
+
+  // Handles common image formats
+  if (mimeType.startsWith('image/') || ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(extension || '')) return 'image';
+
+  // More specific checks for Microsoft Office files
+  if (
+    mimeType === 'application/msword' || // .doc
+    mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || // .docx
+    ['doc', 'docx'].includes(extension || '')
+  ) {
+    return 'doc';
+  }
+
+  if (
+    mimeType === 'application/vnd.ms-excel' || // .xls
+    mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || // .xlsx
+    ['xlsx', 'xls'].includes(extension || '')
+  ) {
+    return 'excel';
+  }
+
+  if (
+    mimeType === 'application/vnd.ms-powerpoint' || // .ppt
+    mimeType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' || // .pptx
+    ['ppt', 'pptx'].includes(extension || '')
+  ) {
+    return 'ppt';
+  }
+
+  if (mimeType === 'text/csv' || extension === 'csv') return 'csv';
+  if (mimeType === 'text/plain' || extension === 'txt') return 'text';
+  
+  return 'unknown';
+}, []);
 
   // Get smart recommendations based on file type
   const getRecommendations = useCallback((fileType: string) => {
@@ -565,22 +596,15 @@ export const DocumentConverter = () => {
     'image/*',
     'application/pdf',
     'text/plain',
-    'application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.ms-powerpoint',
-    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/msword', // .doc
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+    'application/vnd.ms-excel', // .xls
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+    'application/vnd.ms-powerpoint', // .ppt
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
     'text/csv',
-    '.xlsx',
-    '.xls',
-    '.ppt',
-    '.pptx',
     'image/svg+xml',
-    '.doc',
-    '.docx'
   ], []);
-
   return (
     <ToolCard
       title="Document Converter"
