@@ -52,28 +52,75 @@ export const createTextPdf = async (text: string, title?: string): Promise<Blob>
 
     // Add title if provided
     if (title) {
-      page.drawText(title, {
-        x: margin,
-        y: yPosition,
-        size: titleFontSize,
-        font: font,
-        color: rgb(0, 0, 0),
-      });
-      yPosition -= titleFontSize + 20;
+      try {
+        page.drawText(title, {
+          x: margin,
+          y: yPosition,
+          size: titleFontSize,
+          font: font,
+          color: rgb(0, 0, 0),
+        });
+        yPosition -= titleFontSize + 20;
+      } catch (titleError) {
+        console.warn('Error drawing title, skipping:', titleError);
+        // Continue without title
+      }
     }
 
     // Split text into lines that fit the page width
-    const words = text.split(' ');
-    let currentLine = '';
+    const lines = text.split('\n');
     
-    for (const word of words) {
-      const testLine = currentLine + (currentLine ? ' ' : '') + word;
-      const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+    for (const line of lines) {
+      if (!line.trim()) {
+        yPosition -= fontSize + 5; // Add spacing for empty lines
+        continue;
+      }
+
+      const words = line.split(' ');
+      let currentLine = '';
       
-      if (testWidth <= maxWidth) {
-        currentLine = testLine;
-      } else {
-        if (currentLine) {
+      for (const word of words) {
+        const testLine = currentLine + (currentLine ? ' ' : '') + word;
+        
+        try {
+          const testWidth = font.widthOfTextAtSize(testLine, fontSize);
+          
+          if (testWidth <= maxWidth) {
+            currentLine = testLine;
+          } else {
+            if (currentLine) {
+              try {
+                page.drawText(currentLine, {
+                  x: margin,
+                  y: yPosition,
+                  size: fontSize,
+                  font: font,
+                  color: rgb(0, 0, 0),
+                });
+                yPosition -= fontSize + 5;
+              } catch (drawError) {
+                console.warn('Error drawing line, skipping:', drawError);
+                yPosition -= fontSize + 5; // Still move down
+              }
+            }
+            currentLine = word;
+            
+            // Check if we need a new page
+            if (yPosition < margin) {
+              const newPage = pdfDoc.addPage();
+              yPosition = newPage.getHeight() - margin;
+            }
+          }
+        } catch (widthError) {
+          console.warn('Error calculating text width, skipping word:', widthError);
+          // Skip problematic words
+          continue;
+        }
+      }
+      
+      // Draw the last line of this paragraph
+      if (currentLine) {
+        try {
           page.drawText(currentLine, {
             x: margin,
             y: yPosition,
@@ -82,26 +129,17 @@ export const createTextPdf = async (text: string, title?: string): Promise<Blob>
             color: rgb(0, 0, 0),
           });
           yPosition -= fontSize + 5;
-        }
-        currentLine = word;
-        
-        // Check if we need a new page
-        if (yPosition < margin) {
-          const newPage = pdfDoc.addPage();
-          yPosition = newPage.getHeight() - margin;
+        } catch (drawError) {
+          console.warn('Error drawing final line, skipping:', drawError);
+          yPosition -= fontSize + 5; // Still move down
         }
       }
-    }
-    
-    // Draw the last line
-    if (currentLine) {
-      page.drawText(currentLine, {
-        x: margin,
-        y: yPosition,
-        size: fontSize,
-        font: font,
-        color: rgb(0, 0, 0),
-      });
+      
+      // Check if we need a new page
+      if (yPosition < margin) {
+        const newPage = pdfDoc.addPage();
+        yPosition = newPage.getHeight() - margin;
+      }
     }
 
     const pdfBytes = await pdfDoc.save();

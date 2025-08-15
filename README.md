@@ -11,6 +11,7 @@ A modern, AI-powered web application for professional image processing and docum
 
 ### 📄 Document Conversion
 - **PDF Converter**: Convert various file formats to PDF and vice versa
+- **Word to Image**: Convert Word documents (DOC/DOCX) to high-quality JPG/PNG images with proper formatting
 - **PDF to PowerPoint**: Convert PDFs to PowerPoint presentations with text extraction or image-based conversion for exact design preservation
 - **File Compression**: Reduce file sizes while maintaining quality
 - **Multi-format Support**: Handle images, documents, and more

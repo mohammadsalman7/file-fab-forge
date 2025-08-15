@@ -11,6 +11,8 @@ import {
 import { extractTablesFromPdf } from '@/utils/pdfTableExtractor';
 import { convertPdfToDocxData, createDocxBlob, convertTextToDocxData } from '@/utils/docxConverter';
 import { convertWordToPowerPoint, convertPdfToPowerPoint, convertPdfToPowerPointWithImages, createPowerPointBlob } from '@/utils/powerPointConverter';
+import { convertWordDocumentToImage } from '@/utils/wordToImageConverter';
+import { convertWordToPdf } from '@/utils/wordToPdfConverter';
 import { toast } from 'sonner';
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from 'pdfjs-dist';
 // @ts-ignore - handled by Vite
@@ -72,7 +74,7 @@ export const DocumentConverter = () => {
       case 'pdf':
         return ['doc', 'docx', 'ppt', 'jpg', 'png', 'csv'];
       case 'doc':
-        return ['pdf', 'docx', 'ppt', 'jpg', 'png'];
+        return ['pdf', 'docx', 'jpg', 'png'];
       case 'excel':
         return ['csv', 'pdf', 'doc', 'docx'];
       case 'image':
@@ -165,16 +167,13 @@ export const DocumentConverter = () => {
         toast.success('Text converted to PDF successfully!');
       } else if (originalFile.name.endsWith('.doc') || originalFile.name.endsWith('.docx')) {
         try {
-          const mammoth = await import('mammoth');
-          const arrayBuffer = await originalFile.arrayBuffer();
-          const result = await mammoth.extractRawText({ arrayBuffer });
-          const text = result.value || `Content extracted from ${originalFile.name}`;
-          const pdfResult = await createTextPdf(text, originalFile.name);
+          setExtractionProgress('Converting Word document to PDF...');
+          const pdfResult = await convertWordToPdf(originalFile);
           setConvertedFile(pdfResult);
-          toast.success('DOC file converted to PDF successfully!');
-        } catch (error) {
-          console.error('Error extracting DOC content:', error);
-          toast.error('Failed to extract content from DOC file');
+          toast.success('Word document converted to PDF successfully!');
+        } catch (error: any) {
+          console.error('Error converting Word to PDF:', error);
+          toast.error(`Failed to convert Word document to PDF: ${error.message}`);
           return;
         }
       } else if (originalFile.name.endsWith('.ppt') || originalFile.name.endsWith('.pptx')) {
@@ -382,15 +381,25 @@ export const DocumentConverter = () => {
     setConversionType(format);
     try {
       const isPdf = originalFile.type === 'application/pdf' || originalFile.name.toLowerCase().endsWith('.pdf');
+      const isWord = originalFile.name.endsWith('.doc') || originalFile.name.endsWith('.docx') || 
+                    originalFile.type === 'application/msword' || 
+                    originalFile.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      
       if (isPdf) {
         const blob = await renderPdfFirstPageToImage(originalFile, format);
         setConvertedFile(blob);
         toast.success(`PDF converted to ${format.toUpperCase()} successfully!`);
+      } else if (isWord) {
+        setExtractionProgress('Converting Word document to image...');
+        const blob = await convertWordDocumentToImage(originalFile, format);
+        setConvertedFile(blob);
+        toast.success(`Word document converted to ${format.toUpperCase()} successfully!`);
       } else if (originalFile.type.startsWith('image/')) {
         const blob = await reencodeImage(originalFile, format);
         setConvertedFile(blob);
         toast.success(`Image converted to ${format.toUpperCase()} successfully!`);
       } else {
+        // Fallback for other file types
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
         if (!ctx) throw new Error('Canvas not supported');
@@ -417,6 +426,7 @@ export const DocumentConverter = () => {
       toast.error('Failed to convert to image.');
     } finally {
       setIsProcessing(false);
+      setExtractionProgress('');
     }
   }, [originalFile, renderPdfFirstPageToImage, reencodeImage]);
 
@@ -599,7 +609,7 @@ export const DocumentConverter = () => {
                 </div>
               </div>
             )}
-            {originalFile.type === 'application/pdf' && recommendedFormats.includes('ppt') && (
+            {originalFile.type === 'application/pdf' && recommendedFormats.includes('ppt') && !originalFile?.name.endsWith('.doc') && !originalFile?.name.endsWith('.docx') && (
               <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
                 <div className="flex items-center justify-between">
                   <div>
@@ -630,7 +640,7 @@ export const DocumentConverter = () => {
               {recommendedFormats.includes('doc') && (
                 <Button onClick={handleConvertToDoc} disabled={isProcessing}>Convert to DOC</Button>
               )}
-              {recommendedFormats.includes('ppt') && (
+              {recommendedFormats.includes('ppt') && !originalFile?.name.endsWith('.doc') && !originalFile?.name.endsWith('.docx') && (
                 <Button onClick={handleConvertToPpt} disabled={isProcessing}>
                   {useImageBasedConversion && originalFile?.type === 'application/pdf' ? 'Convert to PPT (Image-based)' : 'Convert to PPT'}
                 </Button>

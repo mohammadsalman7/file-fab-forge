@@ -10,7 +10,7 @@ import { SEO } from '@/components/SEO';
 const documentConverterFAQs = [
   {
     question: "What file formats can I convert?",
-    answer: "We support conversions between DOC, DOCX, PDF, JPG, PNG, XLSX, and TXT formats."
+    answer: "We support conversions between DOC, DOCX, PDF, JPG, PNG, XLSX, and TXT formats. Word documents can be converted to high-quality images with proper formatting preserved."
   },
   {
     question: "Is there a limit on file size?",
@@ -107,7 +107,7 @@ const DocumentConverterPage = () => {
               Convert Any File to Any Format — Instantly!
             </h1>
             <p className="text-lg text-white/90 max-w-2xl">
-              Our document converter supports a wide range of formats, letting you transform your files in seconds. Whether it's Word to PDF, DOC/DOCX to Excel or JPG, Excel to PDF, PDF to Word/Excel/JPG/PNG, or JPG to PDF/Word/PNG/JPEG — we've got you covered. For PDF to PowerPoint conversion, we offer image-based conversion that preserves exact design and layout. Fast, secure, and easy to use — just upload your file and get your desired format in one click.
+              Our document converter supports a wide range of formats, letting you transform your files in seconds. Whether it's Word to PDF, DOC/DOCX to JPG/PNG, Excel to PDF, PDF to Word/Excel/JPG/PNG, or JPG to PDF/Word/PNG/JPEG — we've got you covered. For PDF to PowerPoint conversion, we offer image-based conversion that preserves exact design and layout. Fast, secure, and easy to use — just upload your file and get your desired format in one click.
             </p>
           </div>
         </div>
