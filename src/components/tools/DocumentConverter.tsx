@@ -4,6 +4,15 @@ import { FileDropzone } from '@/components/FileDropzone';
 import { ToolCard } from '@/components/ToolCard';
 import { Button } from '@/components/ui/button';
 import { convertImageToPdf, createTextPdf } from '@/utils/pdfConverter';
+import { 
+  extractTextFromPdf, 
+  convertPdfTextToCsv, 
+  convertPdfTextToDocx, 
+  convertPdfTextToDoc,
+  convertPdfToDocxAdvanced,
+  convertPdfToDocAdvanced
+} from '@/utils/pdfTextExtractor';
+import { extractTablesFromPdf } from '@/utils/pdfTableExtractor';
 import { toast } from 'sonner';
 import { getDocument, GlobalWorkerOptions, type PDFDocumentProxy } from 'pdfjs-dist';
 // Tell pdf.js to use the locally bundled worker file (no CDN)
@@ -26,6 +35,7 @@ export const DocumentConverter = () => {
   const [convertedFile, setConvertedFile] = useState<Blob | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [conversionType, setConversionType] = useState<'pdf' | 'docx' | 'jpg' | 'png' | 'image' | 'csv' | 'doc'>('pdf');
+  const [extractionProgress, setExtractionProgress] = useState<string>('');
 
   // Helper: Convert first page of PDF to image blob
   const renderPdfFirstPageToImage = useCallback(async (file: File, format: 'jpg' | 'png'): Promise<Blob> => {
@@ -154,13 +164,15 @@ export const DocumentConverter = () => {
     setConversionType('docx');
 
     try {
-      let content = `Converted DOCX content from ${originalFile.name}`;
+      let content = '';
       
-      // Try to extract text content based on file type
+      // Extract content based on file type
       if (originalFile.type === 'text/plain') {
         content = await originalFile.text();
       } else if (originalFile.type === 'application/pdf') {
-        content = `PDF content converted to DOCX: ${originalFile.name}`;
+        // Extract actual text from PDF with advanced formatting
+        setExtractionProgress('Extracting text from PDF with formatting...');
+        content = await convertPdfToDocxAdvanced(originalFile, originalFile.name);
       } else if (originalFile.type.startsWith('image/')) {
         content = `Image converted to DOCX: ${originalFile.name}`;
       } else if (originalFile.name.endsWith('.xlsx') || originalFile.name.endsWith('.xls')) {
@@ -174,6 +186,8 @@ export const DocumentConverter = () => {
         } catch (e) {
           content = `Excel data converted to DOCX: ${originalFile.name}`;
         }
+      } else {
+        content = `Converted DOCX content from ${originalFile.name}`;
       }
 
       const blob = new Blob(
@@ -187,6 +201,7 @@ export const DocumentConverter = () => {
       toast.error('Failed to convert to DOCX.');
     } finally {
       setIsProcessing(false);
+      setExtractionProgress('');
     }
   };
 
@@ -212,8 +227,22 @@ export const DocumentConverter = () => {
         const lines = text.split('\n');
         csvContent = lines.map(line => line.split(',').join(',')).join('\n');
       } else if (originalFile.type === 'application/pdf') {
-        // PDF to CSV - create a simple CSV with file info
-        csvContent = `File Name,File Type,Size (bytes)\n${originalFile.name},PDF,${originalFile.size}`;
+        // Extract tables and text from PDF for better CSV conversion
+        setExtractionProgress('Extracting tables and text from PDF...');
+        try {
+          const { csvContent: tableCsv, formattedContent } = await extractTablesFromPdf(originalFile);
+          if (tableCsv.trim()) {
+            csvContent = tableCsv;
+          } else {
+            // Fallback to text-based CSV if no tables found
+            const pdfText = await extractTextFromPdf(originalFile);
+            csvContent = convertPdfTextToCsv(pdfText, originalFile.name);
+          }
+        } catch (error) {
+          // Fallback to simple text extraction
+          const pdfText = await extractTextFromPdf(originalFile);
+          csvContent = convertPdfTextToCsv(pdfText, originalFile.name);
+        }
       } else if (originalFile.type.startsWith('image/')) {
         // Image to CSV - create a simple CSV with image info
         csvContent = `File Name,File Type,Size (bytes),Image Type\n${originalFile.name},Image,${originalFile.size},${originalFile.type}`;
@@ -230,6 +259,7 @@ export const DocumentConverter = () => {
       toast.error('Failed to convert to CSV.');
     } finally {
       setIsProcessing(false);
+      setExtractionProgress('');
     }
   };
 
@@ -239,13 +269,15 @@ export const DocumentConverter = () => {
     setConversionType('doc');
 
     try {
-      let content = `Document converted from ${originalFile.name}`;
+      let content = '';
       
-      // Try to extract content based on file type
+      // Extract content based on file type
       if (originalFile.type === 'text/plain') {
         content = await originalFile.text();
       } else if (originalFile.type === 'application/pdf') {
-        content = `PDF content converted to DOC: ${originalFile.name}`;
+        // Extract actual text from PDF with advanced formatting
+        setExtractionProgress('Extracting text from PDF with formatting...');
+        content = await convertPdfToDocAdvanced(originalFile, originalFile.name);
       } else if (originalFile.type.startsWith('image/')) {
         content = `Image converted to DOC: ${originalFile.name}`;
       } else if (originalFile.name.endsWith('.xlsx') || originalFile.name.endsWith('.xls')) {
@@ -259,6 +291,8 @@ export const DocumentConverter = () => {
         } catch (e) {
           content = `Excel data converted to DOC: ${originalFile.name}`;
         }
+      } else {
+        content = `Document converted from ${originalFile.name}`;
       }
 
       const blob = new Blob([content], { type: 'application/msword' });
@@ -269,6 +303,7 @@ export const DocumentConverter = () => {
       toast.error('Failed to convert to DOC.');
     } finally {
       setIsProcessing(false);
+      setExtractionProgress('');
     }
   };
 
@@ -401,6 +436,12 @@ export const DocumentConverter = () => {
               <Button onClick={() => handleConvertToImage('jpg')} disabled={isProcessing}>Convert to JPG</Button>
               <Button onClick={() => handleConvertToImage('png')} disabled={isProcessing}>Convert to PNG</Button>
             </div>
+
+            {isProcessing && extractionProgress && (
+              <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <p className="text-sm text-blue-400 font-medium">{extractionProgress}</p>
+              </div>
+            )}
 
             {convertedFile && (
               <Button onClick={handleDownload} className="w-full bg-green-600 hover:bg-green-700">

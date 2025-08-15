@@ -2,7 +2,7 @@
 export const siteConfig = {
   // Base URL - change this based on environment
   baseUrl: import.meta.env.PROD 
-    ? 'https://www.imagedocpro.com' 
+    ? 'https://imagedocpro.com' 
     : window.location.origin,
   
   // Site metadata

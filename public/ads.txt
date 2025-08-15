@@ -5,6 +5,6 @@ google.com, pub-5022395460457488, DIRECT, f08c47fec0942fa0
 
 
 # Optional: declare subdomains that also host ads.txt
-subdomain=www.imagedocpro.com
+subdomain=imagedocpro.com
 
 
