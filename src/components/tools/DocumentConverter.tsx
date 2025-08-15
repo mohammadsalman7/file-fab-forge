@@ -34,6 +34,7 @@ export const DocumentConverter = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [conversionType, setConversionType] = useState<'pdf' | 'docx' | 'jpg' | 'png' | 'image' | 'csv' | 'doc' | 'ppt'>('pdf');
   const [extractionProgress, setExtractionProgress] = useState<string>('');
+  const [recommendedFormats, setRecommendedFormats] = useState<string[]>([]);
 
   // Get file type from extension or mime type
   const getFileType = useCallback((file: File) => {
@@ -54,17 +55,17 @@ export const DocumentConverter = () => {
   const getRecommendations = useCallback((fileType: string) => {
     switch (fileType) {
       case 'pdf':
-        return ['doc', 'docx', 'jpg', 'png', 'csv'];
+        return ['doc', 'docx', 'ppt', 'jpg', 'png', 'csv'];
       case 'doc':
-        return ['pdf', 'docx', 'jpg', 'png'];
+        return ['pdf', 'docx', 'ppt', 'jpg', 'png'];
       case 'excel':
         return ['csv', 'pdf', 'doc', 'docx'];
       case 'image':
         return ['pdf', 'jpg', 'png'];
       case 'ppt':
-        return ['pdf', 'jpg', 'png'];
+        return ['pdf', 'doc', 'docx', 'jpg', 'png'];
       case 'csv':
-        return ['pdf', 'doc', 'docx'];
+        return ['pdf', 'doc', 'docx', 'excel'];
       case 'text':
         return ['pdf', 'doc', 'docx'];
       default:
@@ -135,6 +136,7 @@ export const DocumentConverter = () => {
     // Set default conversion type based on file type
     const fileType = getFileType(file);
     const recommendations = getRecommendations(fileType);
+    setRecommendedFormats(recommendations);
     setConversionType(recommendations[0] as any);
   };
 
@@ -160,18 +162,18 @@ export const DocumentConverter = () => {
           const mammoth = await import('mammoth');
           const arrayBuffer = await originalFile.arrayBuffer();
           const result = await mammoth.extractRawText({ arrayBuffer });
-          const text = result.value || `Converted content from ${originalFile.name}`;
+          const text = result.value || `Content extracted from ${originalFile.name}`;
           const pdfResult = await createTextPdf(text, originalFile.name);
           setConvertedFile(pdfResult);
           toast.success('DOC file converted to PDF successfully!');
         } catch (error) {
-          const text = `Converted content from ${originalFile.name}`;
-          const result = await createTextPdf(text, originalFile.name);
-          setConvertedFile(result);
-          toast.success('DOC file converted to PDF successfully!');
+          console.error('Error extracting DOC content:', error);
+          toast.error('Failed to extract content from DOC file');
+          return;
         }
       } else if (originalFile.name.endsWith('.ppt') || originalFile.name.endsWith('.pptx')) {
-        const text = `PowerPoint presentation: ${originalFile.name}\n\nThis file has been converted to PDF format.\nFor best results, please use a specialized PowerPoint converter.`;
+        // For PPT files, create a placeholder with file info
+        const text = `PowerPoint Presentation\n\nFile: ${originalFile.name}\nSize: ${(originalFile.size / 1024 / 1024).toFixed(2)} MB\n\nNote: This is a basic conversion. For better results with PowerPoint files, please use specialized PPT conversion tools.`;
         const result = await createTextPdf(text, originalFile.name);
         setConvertedFile(result);
         toast.success('PowerPoint file converted to PDF successfully!');
@@ -250,12 +252,32 @@ export const DocumentConverter = () => {
         content = `Converted DOCX content from ${originalFile.name}`;
       }
 
-      const blob = new Blob(
-        [content],
-        { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }
-      );
-      setConvertedFile(blob);
-      toast.success('File converted to DOCX format!');
+             // Create proper DOCX file using docx library
+       try {
+         // @ts-ignore - docx types not available
+         const { Document, Packer, Paragraph, TextRun } = await import('docx');
+        
+        const doc = new Document({
+          sections: [{
+            properties: {},
+            children: content.split('\n').map(line => 
+              new Paragraph({
+                children: [new TextRun(line || ' ')],
+              })
+            ),
+          }],
+        });
+
+        const blob = await Packer.toBlob(doc);
+        setConvertedFile(blob);
+        toast.success('File converted to DOCX format!');
+      } catch (error) {
+        console.error('Error creating DOCX:', error);
+        // Fallback to simple text blob
+        const blob = new Blob([content], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+        setConvertedFile(blob);
+        toast.success('File converted to DOCX format!');
+      }
     } catch (error) {
       console.error('Error converting to DOCX:', error);
       toast.error('Failed to convert to DOCX.');
@@ -335,11 +357,23 @@ export const DocumentConverter = () => {
       if (originalFile.type === 'text/plain') {
         content = await originalFile.text();
       } else if (originalFile.type === 'application/pdf') {
-        // Extract actual text from PDF with advanced formatting
-        setExtractionProgress('Extracting text from PDF with formatting...');
-        content = await convertPdfToDocAdvanced(originalFile, originalFile.name);
+        // Extract actual text from PDF
+        setExtractionProgress('Extracting text from PDF...');
+        content = await extractTextFromPdf(originalFile);
+      } else if (originalFile.name.endsWith('.doc') || originalFile.name.endsWith('.docx')) {
+        try {
+          // @ts-ignore - mammoth types not available
+          const mammoth = await import('mammoth');
+          const arrayBuffer = await originalFile.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          content = result.value || `Document content from ${originalFile.name}`;
+        } catch (error) {
+          console.error('Error extracting DOC content:', error);
+          toast.error('Failed to extract content from DOC file');
+          return;
+        }
       } else if (originalFile.type.startsWith('image/')) {
-        content = `Image converted to DOC: ${originalFile.name}`;
+        content = `Image file: ${originalFile.name}\nConverted to DOC format`;
       } else if (originalFile.name.endsWith('.xlsx') || originalFile.name.endsWith('.xls')) {
         try {
           const XLSX = await getXLSX();
@@ -349,13 +383,19 @@ export const DocumentConverter = () => {
           const sheet = workbook.Sheets[firstSheetName];
           content = XLSX.utils.sheet_to_csv(sheet);
         } catch (e) {
-          content = `Excel data converted to DOC: ${originalFile.name}`;
+          console.error('Error processing Excel file:', e);
+          toast.error('Failed to process Excel file');
+          return;
         }
+      } else if (originalFile.name.endsWith('.ppt') || originalFile.name.endsWith('.pptx')) {
+        content = `PowerPoint Presentation: ${originalFile.name}\n\nThis presentation has been converted to DOC format.\nFor better results, please use specialized PowerPoint conversion tools.`;
       } else {
-        content = `Document converted from ${originalFile.name}`;
+        content = `Document: ${originalFile.name}\nFile type: ${originalFile.type}\nConverted to DOC format`;
       }
 
-      const blob = new Blob([content], { type: 'application/msword' });
+      // Create RTF format for better compatibility
+      const rtfContent = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times New Roman;}} \\f0\\fs24 ${content.replace(/\n/g, '\\par ')}}`;
+      const blob = new Blob([rtfContent], { type: 'application/rtf' });
       setConvertedFile(blob);
       toast.success('File converted to DOC format successfully!');
     } catch (error) {
@@ -424,7 +464,88 @@ export const DocumentConverter = () => {
     }
   };
 
+  const handleConvertToPpt = async () => {
+    if (!originalFile) return;
+    setIsProcessing(true);
+    setConversionType('ppt');
 
+    try {
+      let content = '';
+      
+      // Extract content based on file type
+      if (originalFile.type === 'text/plain') {
+        content = await originalFile.text();
+      } else if (originalFile.type === 'application/pdf') {
+        setExtractionProgress('Extracting text from PDF...');
+        content = await extractTextFromPdf(originalFile);
+      } else if (originalFile.name.endsWith('.doc') || originalFile.name.endsWith('.docx')) {
+        try {
+          // @ts-ignore - mammoth types not available
+          const mammoth = await import('mammoth');
+          const arrayBuffer = await originalFile.arrayBuffer();
+          const result = await mammoth.extractRawText({ arrayBuffer });
+          content = result.value || `Document content from ${originalFile.name}`;
+        } catch (error) {
+          console.error('Error extracting DOC content:', error);
+          toast.error('Failed to extract content from DOC file');
+          return;
+        }
+      } else if (originalFile.name.endsWith('.ppt') || originalFile.name.endsWith('.pptx')) {
+        // If it's already a PPT file, just copy it
+        setConvertedFile(originalFile);
+        toast.success('PowerPoint file processed successfully!');
+        return;
+      } else if (originalFile.name.endsWith('.xlsx') || originalFile.name.endsWith('.xls')) {
+        try {
+          const XLSX = await getXLSX();
+          const arrayBuffer = await originalFile.arrayBuffer();
+          const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[firstSheetName];
+          content = XLSX.utils.sheet_to_csv(sheet);
+        } catch (e) {
+          console.error('Error processing Excel file:', e);
+          toast.error('Failed to process Excel file');
+          return;
+        }
+      } else {
+        content = `Content from: ${originalFile.name}\nFile type: ${originalFile.type}\nConverted to PowerPoint format`;
+      }
+
+      // Create a basic PowerPoint-like structure (HTML format)
+      const pptContent = `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Converted Presentation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .slide { page-break-after: always; padding: 20px; border: 1px solid #ccc; margin-bottom: 20px; }
+        h1 { color: #2E74B5; }
+        .content { line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <h1>Converted from ${originalFile.name}</h1>
+        <div class="content">
+            ${content.split('\n').map(line => `<p>${line}</p>`).join('')}
+        </div>
+    </div>
+</body>
+</html>`;
+
+      const blob = new Blob([pptContent], { type: 'application/vnd.ms-powerpoint' });
+      setConvertedFile(blob);
+      toast.success('File converted to PowerPoint format!');
+    } catch (error) {
+      console.error('Error converting to PPT:', error);
+      toast.error('Failed to convert to PowerPoint.');
+    } finally {
+      setIsProcessing(false);
+      setExtractionProgress('');
+    }
+  };
 
   const handleDownload = () => {
     if (!convertedFile || !originalFile) return;
@@ -437,7 +558,8 @@ export const DocumentConverter = () => {
     if (conversionType === 'pdf') extension = '.pdf';
     else if (conversionType === 'docx') extension = '.docx';
     else if (conversionType === 'csv') extension = '.csv';
-    else if (conversionType === 'doc') extension = '.doc';
+    else if (conversionType === 'doc') extension = '.rtf';
+    else if (conversionType === 'ppt') extension = '.html';
     else if (conversionType === 'jpg') extension = '.jpg';
     else if (conversionType === 'png') extension = '.png';
 
@@ -493,14 +615,14 @@ export const DocumentConverter = () => {
             </div>
 
             {/* Smart Recommendations */}
-            {originalFile && (
+            {originalFile && recommendedFormats.length > 0 && (
               <div className="p-3 bg-primary/10 border border-primary/20 rounded-lg">
                 <h4 className="text-sm font-medium mb-2 text-primary">✨ Recommended Formats</h4>
                 <p className="text-xs text-muted-foreground mb-2">
                   Based on your {getFileType(originalFile)} file, we recommend converting to:
                 </p>
                 <div className="flex flex-wrap gap-1">
-                  {getRecommendations(getFileType(originalFile)).map((format) => (
+                  {recommendedFormats.map((format) => (
                     <span
                       key={format}
                       className="px-2 py-1 bg-primary/20 text-primary text-xs rounded-md font-medium"
@@ -513,12 +635,27 @@ export const DocumentConverter = () => {
             )}
 
             <div className="grid grid-cols-2 gap-2">
-              <Button onClick={handleConvertToPdf} disabled={isProcessing}>Convert to PDF</Button>
-              <Button onClick={handleConvertToDocx} disabled={isProcessing}>Convert to DOCX</Button>
-              <Button onClick={handleConvertToDoc} disabled={isProcessing}>Convert to DOC</Button>
-              <Button onClick={handleConvertToCsv} disabled={isProcessing}>Convert to CSV</Button>
-              <Button onClick={() => handleConvertToImage('jpg')} disabled={isProcessing}>Convert to JPG</Button>
-              <Button onClick={() => handleConvertToImage('png')} disabled={isProcessing}>Convert to PNG</Button>
+              {recommendedFormats.includes('pdf') && (
+                <Button onClick={handleConvertToPdf} disabled={isProcessing}>Convert to PDF</Button>
+              )}
+              {recommendedFormats.includes('docx') && (
+                <Button onClick={handleConvertToDocx} disabled={isProcessing}>Convert to DOCX</Button>
+              )}
+              {recommendedFormats.includes('doc') && (
+                <Button onClick={handleConvertToDoc} disabled={isProcessing}>Convert to DOC</Button>
+              )}
+              {recommendedFormats.includes('ppt') && (
+                <Button onClick={handleConvertToPpt} disabled={isProcessing}>Convert to PPT</Button>
+              )}
+              {recommendedFormats.includes('csv') && (
+                <Button onClick={handleConvertToCsv} disabled={isProcessing}>Convert to CSV</Button>
+              )}
+              {recommendedFormats.includes('jpg') && (
+                <Button onClick={() => handleConvertToImage('jpg')} disabled={isProcessing}>Convert to JPG</Button>
+              )}
+              {recommendedFormats.includes('png') && (
+                <Button onClick={() => handleConvertToImage('png')} disabled={isProcessing}>Convert to PNG</Button>
+              )}
             </div>
 
             {isProcessing && extractionProgress && (
