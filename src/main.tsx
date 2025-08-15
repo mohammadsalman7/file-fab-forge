@@ -2,18 +2,20 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { performanceMonitor } from './utils/performance'
+import { serviceWorkerUtils } from './utils/serviceWorker'
+import { pwaUtils } from './utils/pwa'
 
-// Register service worker for caching
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    const swUrl = `${import.meta.env.BASE_URL || '/'}sw.js`;
-    navigator.serviceWorker.register(swUrl)
-      .then((registration) => {
-        console.log('SW registered: ', registration);
-      })
-      .catch((registrationError) => {
-        console.log('SW registration failed: ', registrationError);
-      });
+// Initialize service worker and PWA features
+if (serviceWorkerUtils.isSupported()) {
+  window.addEventListener('load', async () => {
+    // Initialize our service worker manager (will use existing registration if available)
+    await serviceWorkerUtils.init();
+    
+    // Initialize PWA features
+    pwaUtils.init();
+    
+    // Request notification permission for update notifications
+    await serviceWorkerUtils.requestNotificationPermission();
   });
 }
 
