@@ -1,156 +1,73 @@
-# File Processing Studio 🚀
+# Welcome to your Lovable project
 
-A modern, AI-powered web application for professional image processing and document conversion. Built with React, TypeScript, and cutting-edge AI technologies.
+## Project info
 
-## ✨ Features
+**URL**: https://lovable.dev/projects/736115a7-60a6-4dc2-9ec7-e8d6efa49d22
 
-### 🎨 AI-Powered Image Processing
-- **Background Removal**: Remove backgrounds from any image with AI precision
-- **Image Upscaling**: Transform low-resolution images into crystal-clear HD quality
-- **Manual Editor**: Fine-tune your images with advanced editing tools
+## How can I edit this code?
 
-### 📄 Document Conversion
-- **PDF Converter**: Convert various file formats to PDF and vice versa
-- **File Compression**: Reduce file sizes while maintaining quality
-- **Multi-format Support**: Handle images, documents, and more
+There are several ways of editing your application.
 
-### 🛠️ Advanced Tools
-- **Before/After Comparison**: Visual comparison of processed images
-- **Background Customizer**: Replace backgrounds with custom images or colors
-- **Batch Processing**: Process multiple files efficiently
+**Use Lovable**
 
-## 🛠️ Technology Stack
+Simply visit the [Lovable Project](https://lovable.dev/projects/736115a7-60a6-4dc2-9ec7-e8d6efa49d22) and start prompting.
 
-- **Frontend**: React 18 + TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS + shadcn/ui
-- **AI/ML**: TensorFlow.js + DeepLab models
-- **State Management**: TanStack Query
-- **Routing**: React Router DOM
-- **UI Components**: Radix UI primitives
-- **File Processing**: Fabric.js, PDF-lib
+Changes made via Lovable will be committed automatically to this repo.
 
-## 🚀 Getting Started
+**Use your preferred IDE**
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-### Installation
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd file-fab-forge
-   ```
+Follow these steps:
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-4. **Open your browser**
-   Navigate to `http://localhost:5173`
+# Step 3: Install the necessary dependencies.
+npm i
 
-## 📁 Project Structure
-
-```
-src/
-├── components/          # Reusable UI components
-│   ├── layout/         # Layout components (Header, Footer, etc.)
-│   ├── tools/          # Tool-specific components
-│   └── ui/             # shadcn/ui components
-├── pages/              # Page components
-├── utils/              # Utility functions and AI processing
-├── hooks/              # Custom React hooks
-└── lib/                # Library configurations
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
 ```
 
-## 🎯 Key Features Explained
+**Edit a file directly in GitHub**
 
-### AI Background Removal
-- Uses TensorFlow.js with DeepLab models
-- Processes images client-side for privacy
-- Supports various image formats
-- Real-time preview and processing
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-### Image Upscaling
-- AI-powered upscaling algorithms
-- Multiple quality options
-- Batch processing support
-- Before/after comparison tools
+**Use GitHub Codespaces**
 
-### Document Conversion
-- PDF to image conversion
-- Image to PDF conversion
-- Multiple format support
-- Compression options
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## 🔧 Development
+## What technologies are used for this project?
 
-### Available Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+This project is built with:
 
-### Code Style
-- TypeScript for type safety
-- ESLint for code quality
-- Prettier for formatting
-- Component-based architecture
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-## 🌟 Features in Detail
+## How can I deploy this project?
 
-### Background Removal
-- Drag & drop interface
-- Real-time processing
-- Multiple export formats
-- Quality settings
+Simply open [Lovable](https://lovable.dev/projects/736115a7-60a6-4dc2-9ec7-e8d6efa49d22) and click on Share -> Publish.
 
-### Image Upscaling
-- AI-powered enhancement
-- Multiple scale factors
-- Quality preservation
-- Batch processing
+## Can I connect a custom domain to my Lovable project?
 
-### Document Tools
-- PDF conversion
-- File compression
-- Format validation
-- Error handling
+Yes, you can!
 
-## 🤝 Contributing
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🆘 Support
-
-- **Documentation**: Check the Help Center
-- **Issues**: Report bugs via GitHub Issues
-- **Contact**: Reach out through the Contact page
-
-## 🔮 Roadmap
-
-- [ ] Video processing capabilities
-- [ ] Cloud storage integration
-- [ ] Advanced AI models
-- [ ] Mobile app development
-- [ ] API for developers
-
----
-
-**Built with ❤️ using modern web technologies**
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)

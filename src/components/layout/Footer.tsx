@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter, Youtube, Linkedin } from 'lucide-react';
+import logo from '@/assets/logo.png';
 
 const Footer = () => {
   return (
@@ -9,7 +10,7 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center">
-              <img src="/uploads/logo.png" alt="ImageDocProLogo" aria-label="ImageDocProLogo" title="ImageDocProLogo" aria-hidden="true" className="h-[50px] w-auto" />
+              <img src="/lovable-uploads/d6e67793-e22c-4362-a794-c59496780b93.png" alt="Remove Background Logo" className="h-24 w-auto" />
             </div>
             <p className="text-sm text-muted-foreground">
               Professional AI-powered tools for image processing and file conversion. 
@@ -24,8 +25,6 @@ const Footer = () => {
               <li><Link to="/background-remover" className="hover:text-primary transition-colors">Background Remover</Link></li>
               <li><Link to="/image-upscaler" className="hover:text-primary transition-colors">Image Upscaler</Link></li>
               <li><Link to="/document-converter" className="hover:text-primary transition-colors">Document Converter</Link></li>
-              <li><Link to="/file-compressor" className="hover:text-primary transition-colors">File Compressor</Link></li>
-              <li><Link to="/pdf-password-remover" className="hover:text-primary transition-colors">PDF Unlock</Link></li>
             </ul>
           </div>
 
@@ -54,25 +53,25 @@ const Footer = () => {
         {/* Social Links & Copyright */}
         <div className="mt-12 pt-8 border-t border-border/40 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="flex space-x-4">
-            <a href="https://www.facebook.com/share/17CrJU5TcS/" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Facebook className="h-5 w-5" />
             </a>
-            <a href="https://www.instagram.com/imagedocpro?igsh=MWFjbTZ6MHZ3Zjcx" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Instagram className="h-5 w-5" />
             </a>
-            <a href="https://x.com/imagedocpro" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Twitter className="h-5 w-5" />
             </a>
-            <a href="https://youtube.com/@imagedocpro?si=C_s14Hsk-mqwMe-H" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Youtube className="h-5 w-5" />
             </a>
-            <a href="https://www.linkedin.com/company/imagedocpro" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
+            <a href="#" className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-primary/10 transition-colors">
               <Linkedin className="h-5 w-5" />
             </a>
           </div>
           
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ImageDocPro. All rights reserved.
+            © 2024 Remove. All rights reserved.
           </p>
         </div>
       </div>

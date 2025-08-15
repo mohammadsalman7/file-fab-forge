@@ -82,8 +82,8 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
     if (!mainSubjectMask && result.length > 0) {
       mainSubjectMask = result.reduce((largest, current) => {
         if (!current.mask) return largest;
-        const currentSize = Array.from(current.mask.data).reduce((sum: number, val: number) => sum + val, 0);
-        const largestSize = largest?.mask?.data ? Array.from(largest.mask.data).reduce((sum: number, val: number) => sum + val, 0) : 0;
+        const currentSize = current.mask.data.reduce((sum: number, val: number) => sum + val, 0);
+        const largestSize = largest?.mask?.data.reduce((sum: number, val: number) => sum + val, 0) || 0;
         return currentSize > largestSize ? current : largest;
       }).mask;
     }

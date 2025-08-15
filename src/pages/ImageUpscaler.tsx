@@ -5,7 +5,6 @@ import { ImageUpscaler } from '@/components/tools/ImageUpscaler';
 import { FAQ } from '@/components/FAQ';
 import { Testimonials } from '@/components/Testimonials';
 import Layout from '@/components/layout/Layout';
-import { SEO } from '@/components/SEO';
 
 const imageUpscalerFAQs = [
   {
@@ -58,41 +57,13 @@ const imageUpscalerTestimonials = [
 const ImageUpscalerPage = () => {
   return (
     <Layout>
-      <SEO
-        title="AI Image Upscaler – Enhance Image Quality to HD Online | ImageDocPro"
-        description="Upscale images to 2x or 4x HD with AI. Improve logos, documents, and photos with advanced Real‑ESRGAN technology. Free, fast, and secure."
-        canonical="https://imagedocpro.com/image-upscaler"
-        image="https://imagedocpro.com/uploads/logo2.jpg"
-        type="article"
-        structuredData={{
-          '@context': 'https://schema.org',
-          '@graph': [
-            {
-              '@type': 'SoftwareApplication',
-              name: 'AI Image Upscaler',
-              url: 'https://imagedocpro.com/image-upscaler',
-              applicationCategory: 'MultimediaApplication',
-              operatingSystem: 'Web Browser',
-              offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' }
-            },
-            {
-              '@type': 'FAQPage',
-              mainEntity: imageUpscalerFAQs.map(f => ({
-                '@type': 'Question',
-                name: f.question,
-                acceptedAnswer: { '@type': 'Answer', text: f.answer }
-              }))
-            }
-          ]
-        }}
-      />
       <div className="min-h-screen bg-gradient-secondary">
       {/* Header */}
       <div className="bg-gradient-primary">
         <div className="container mx-auto px-6 py-8">
           <div className="flex items-center space-x-4 mb-4">
             <Link to="/">
-              <Button variant="ghost" size="sm" className="text-white hover:bg-white/10 hover:text-white">
+              <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Tools
               </Button>

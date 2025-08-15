@@ -29,7 +29,7 @@ export const convertImageToPdf = async (imageBlob: Blob): Promise<Blob> => {
 
     // Serialize the PDF
     const pdfBytes = await pdfDoc.save();
-    return new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
+    return new Blob([pdfBytes], { type: 'application/pdf' });
   } catch (error) {
     console.error('Error converting image to PDF:', error);
     throw error;
@@ -105,7 +105,7 @@ export const createTextPdf = async (text: string, title?: string): Promise<Blob>
     }
 
     const pdfBytes = await pdfDoc.save();
-    return new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' });
+    return new Blob([pdfBytes], { type: 'application/pdf' });
   } catch (error) {
     console.error('Error creating text PDF:', error);
     throw error;
