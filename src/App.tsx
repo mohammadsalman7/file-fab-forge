@@ -12,10 +12,12 @@ import { ServiceWorkerStatus } from "@/components/ServiceWorkerStatus";
 const Index = lazy(() => import("./pages/Index"));
 const BackgroundRemoverPage = lazy(() => import("./pages/BackgroundRemover"));
 const ImageUpscalerPage = lazy(() => import("./pages/ImageUpscaler"));
-const DocumentConverterPage = lazy(() => import("./pages/DocumentConverter"));
+
 const FileCompressorPage = lazy(() => import("./pages/FileCompressor"));
 const PdfPasswordRemoverPage = lazy(() => import("./pages/PdfPasswordRemover"));
 const PdfProtectorPage = lazy(() => import("./pages/PdfProtector"));
+const PdfMergerPage = lazy(() => import("./pages/PdfMerger"));
+const ImageMergerPage = lazy(() => import("./pages/ImageMerger"));
 const CodeGeneratorPage = lazy(() => import("./pages/CodeGenerator"));
 const FAQPage = lazy(() => import("./pages/FAQ"));
 const Terms = lazy(() => import("./pages/Terms"));
@@ -56,10 +58,12 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/background-remover" element={<BackgroundRemoverPage />} />
             <Route path="/image-upscaler" element={<ImageUpscalerPage />} />
-            <Route path="/document-converter" element={<DocumentConverterPage />} />
+
             <Route path="/file-compressor" element={<FileCompressorPage />} />
             <Route path="/pdf-password-remover" element={<PdfPasswordRemoverPage />} />
             <Route path="/pdf-protector" element={<PdfProtectorPage />} />
+            <Route path="/pdf-merger" element={<PdfMergerPage />} />
+            <Route path="/image-merger" element={<ImageMergerPage />} />
             <Route path="/code-generator" element={<CodeGeneratorPage />} />
             <Route path="/faq" element={<FAQPage />} />
             <Route path="/support" element={<Support />} />

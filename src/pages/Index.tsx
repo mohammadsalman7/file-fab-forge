@@ -1,4 +1,4 @@
-import { Scissors, Maximize2, FileText, ArrowRight, Minimize2, Unlock, Lock, QrCode, CheckCircle, Star, Users, Zap } from 'lucide-react';
+import { Scissors, Maximize2, FileText, ArrowRight, Minimize2, Unlock, Lock, QrCode, CheckCircle, Star, Users, Zap, Image } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +12,7 @@ const Index = () => {
     <Layout>
       <SEO
         title="ImageDocPro – Free Online Background Remover"
-        description="Remove backgrounds, upscale images, convert documents, compress files, and unlock PDFs — free, fast, and private in your browser."
+        description="Remove backgrounds, upscale images, convert documents, compress files, merge PDFs, and unlock PDFs — free, fast, and private in your browser."
         canonical="/"
         image="/uploads/logo2.jpg"
         type="website"
@@ -37,8 +37,8 @@ const Index = () => {
                 ImageDocPro - Free Tools
               </h1>
               <p className="text-base sm:text-xl text-white/90 mb-12 max-w-4xl mx-auto leading-relaxed">
-                Free online background remover, image upscaler, file converter, and PDF password tools. Remove background from images online free with AI precision.
-                Professional-grade tools for image processing, document conversion, and PDF security.
+                Free online background remover, image upscaler, image merger, file converter, PDF merger, and PDF password tools. Remove background from images online free with AI precision.
+                Professional-grade tools for image processing, document conversion, and PDF management.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-white/80 justify-center max-w-2xl mx-auto">
                 <div className="flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-full">
@@ -49,10 +49,7 @@ const Index = () => {
                   <Maximize2 className="h-6 w-6" />
                   <span className="font-medium">Image Upscaling</span>
                 </div>
-                <div className="flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-full">
-                  <FileText className="h-6 w-6" />
-                  <span className="font-medium">Document Conversion</span>
-                </div>
+
                 <div className="flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-full">
                   <Minimize2 className="h-6 w-6" />
                   <span className="font-medium">File Compression</span>
@@ -60,6 +57,14 @@ const Index = () => {
                 <div className="flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-full">
                   <Unlock className="h-6 w-6" />
                   <span className="font-medium">PDF Password Tools</span>
+                </div>
+                <div className="flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-full">
+                  <FileText className="h-6 w-6" />
+                  <span className="font-medium">PDF Merger</span>
+                </div>
+                <div className="flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-full">
+                  <Image className="h-6 w-6" />
+                  <span className="font-medium">Image Merger</span>
                 </div>
                 <div className="flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-full">
                   <QrCode className="h-6 w-6" />
@@ -131,30 +136,7 @@ const Index = () => {
               </CardContent>
             </Card>
 
-            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="Document Converter">
-              <CardHeader className="pb-6 flex-shrink-0">
-                <div className="flex items-center space-x-4">
-                  <div className="p-3 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors flex-shrink-0">
-                    <FileText className="h-8 w-8 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <CardTitle className="text-lg font-semibold leading-tight">Document Converter</CardTitle>
-                    <CardDescription className="text-sm mt-1">Convert between formats</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0 flex-grow flex flex-col">
-                <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">
-                  Convert your documents between different formats with ease and high-quality output.
-                </p>
-                <Link to="/document-converter" className="mt-auto">
-                  <Button className="w-full group-hover:bg-primary/90 transition-all duration-300 h-12 text-base font-medium">
-                    Get Started
-                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+
 
             <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="File Compressor">
               <CardHeader className="pb-6 flex-shrink-0">
@@ -231,6 +213,56 @@ const Index = () => {
               </CardContent>
             </Card>
 
+            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="PDF Merger">
+              <CardHeader className="pb-6 flex-shrink-0">
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors flex-shrink-0">
+                    <FileText className="h-8 w-8 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <CardTitle className="text-lg font-semibold leading-tight">PDF Merger</CardTitle>
+                    <CardDescription className="text-sm mt-1">Combine multiple PDF files</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0 flex-grow flex flex-col">
+                <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">
+                  Merge multiple PDF files into a single document with drag-and-drop ease.
+                </p>
+                <Link to="/pdf-merger" className="mt-auto">
+                  <Button className="w-full group-hover:bg-primary/90 transition-all duration-300 h-12 text-base font-medium">
+                    Get Started
+                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="Image Merger">
+              <CardHeader className="pb-6 flex-shrink-0">
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 rounded-xl bg-primary/15 group-hover:bg-primary/25 transition-colors flex-shrink-0">
+                    <Image className="h-8 w-8 text-primary" />
+                  </div>
+                  <div className="min-w-0">
+                    <CardTitle className="text-lg font-semibold leading-tight">Image Merger</CardTitle>
+                    <CardDescription className="text-sm mt-1">Combine multiple images into one</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0 flex-grow flex flex-col">
+                <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">
+                  Merge multiple images into a single image with horizontal, vertical, grid, or collage layouts.
+                </p>
+                <Link to="/image-merger" className="mt-auto">
+                  <Button className="w-full group-hover:bg-primary/90 transition-all duration-300 h-12 text-base font-medium">
+                    Get Started
+                    <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
             <Card className="group hover:shadow-2xl transition-all duration-500 cursor-pointer border-border/50 bg-card/50 backdrop-blur-sm hover:scale-105 hover:bg-card/80 h-full flex flex-col" aria-label="QR & Barcode Generator">
               <CardHeader className="pb-6 flex-shrink-0">
                 <div className="flex items-center space-x-4">
@@ -298,10 +330,9 @@ const Index = () => {
                 enhances low-resolution images to HD quality using sophisticated AI algorithms.
               </p>
               <p className="text-muted-foreground mb-4">
-                For document management, our <Link to="/document-converter" className="text-primary hover:underline">document converter</Link>
-                supports multiple formats including PDF, Word, Excel, and more. The <Link to="/file-compressor" className="text-primary hover:underline">file compressor</Link>
-                reduces file sizes while maintaining quality. Our PDF tools include a <Link to="/pdf-password-remover" className="text-primary hover:underline">password remover</Link>
-                and <Link to="/pdf-protector" className="text-primary hover:underline">protector</Link> for secure document management.
+                For document management, our <Link to="/file-compressor" className="text-primary hover:underline">file compressor</Link>
+                reduces file sizes while maintaining quality. Our PDF tools include a <Link to="/pdf-password-remover" className="text-primary hover:underline">password remover</Link>,
+                <Link to="/pdf-protector" className="text-primary hover:underline">protector</Link>, and <Link to="/pdf-merger" className="text-primary hover:underline">merger</Link> for comprehensive document management.
               </p>
               <p className="text-muted-foreground">
                 Additionally, our <Link to="/code-generator" className="text-primary hover:underline">QR & barcode generator</Link> creates
@@ -361,7 +392,7 @@ const Index = () => {
 					<h3 className="text-xl font-semibold mb-3" aria-label="What you can do" >What you can do</h3>
 					<p>
 						Remove or customize backgrounds with our background remover and background customizer. Make
-						blurry photos usable with the image upscaler. Convert files with the document converter, and
+						                blurry photos usable with the image upscaler. Compress files with the file compressor, and
 						reduce file size using the file compressor while keeping clear quality for web and email.
 						Unlock or protect PDFs with the built‑in PDF tools: add passwords, remove passwords, and
 						manage permissions when needed. You can also generate code snippets, compare edits with a

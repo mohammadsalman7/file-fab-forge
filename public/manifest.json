@@ -1,7 +1,7 @@
 {
   "name": "ImageDocPro - Free Online Image & PDF Tools",
   "short_name": "ImageDocPro",
-  "description": "Free online image processing tools with AI background remover, image upscaler, document converter, file compressor, and PDF password remover.",
+  "description": "Free online image processing tools with AI background remover, image upscaler, file compressor, and PDF password remover.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         name: 'ImageDocPro - Free Online Image & PDF Tools',
         short_name: 'ImageDocPro',
-        description: 'Free online image processing tools with AI background remover, image upscaler, document converter, file compressor, and PDF password remover.',
+        description: 'Free online image processing tools with AI background remover, image upscaler, file compressor, and PDF password remover.',
         theme_color: '#3b82f6',
         background_color: '#ffffff',
         display: 'standalone',

@@ -12,10 +12,9 @@ const Header = () => {
     { name: 'Home', href: '/' },
     { name: 'Background Remover', href: '/background-remover' },
     { name: 'Image Upscaler', href: '/image-upscaler' },
-    { name: 'Document Converter', href: '/document-converter' },
     { name: 'File Compressor', href: '/file-compressor' },
     { name: 'PDF Unlock', href: '/pdf-password-remover' },
-
+    { name: 'PDF Merger', href: '/pdf-merger' },
     // { name: 'PDF Protector', href: '/pdf-protector' },
   ];
 

@@ -31,11 +31,12 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://imagedocpro.com/document-converter</loc>
+    <loc>https://imagedocpro.com/image-merger</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
+
   <url>
     <loc>https://imagedocpro.com/file-compressor</loc>
     <lastmod>2024-12-19</lastmod>
@@ -44,6 +45,12 @@
   </url>
   <url>
     <loc>https://imagedocpro.com/pdf-protector</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://imagedocpro.com/pdf-merger</loc>
     <lastmod>2024-12-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>

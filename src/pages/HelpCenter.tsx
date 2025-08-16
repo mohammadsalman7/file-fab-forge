@@ -79,7 +79,7 @@ const HelpCenter = () => {
                   <ul className="space-y-2 text-sm">
                     <li><a href="#" className="text-primary hover:underline">Background Remover Tutorial</a></li>
                     <li><a href="#" className="text-primary hover:underline">Image Upscaler Guide</a></li>
-                    <li><a href="#" className="text-primary hover:underline">Document Converter Tips</a></li>
+                    <li><a href="#" className="text-primary hover:underline">File Compressor Tips</a></li>
                   </ul>
                 </CardContent>
               </Card>
