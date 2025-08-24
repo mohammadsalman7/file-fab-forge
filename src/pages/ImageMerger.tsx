@@ -3,6 +3,10 @@ import Layout from '@/components/layout/Layout';
 import { Testimonials } from '@/components/Testimonials';
 import { FAQ } from '@/components/FAQ';
 import { SEO } from '@/components/SEO';
+import { ContentEnhancer } from '@/components/ContentEnhancer';
+import { SmartAd } from '@/components/SmartAd';
+import { ComprehensiveGuide } from '@/components/ComprehensiveGuide';
+import { Image, Grid, Palette, Download, Settings, Layers, Sparkles, Zap } from 'lucide-react';
 
 const ImageMergerPage = () => {
   const faqItems = [
@@ -75,6 +79,102 @@ const ImageMergerPage = () => {
     }
   ];
 
+  // Content for the ContentEnhancer component
+  const contentData = {
+    toolName: "Image Merger",
+    toolDescription: "Our advanced image merger tool allows you to combine multiple images into a single, cohesive composition. Whether you're creating social media collages, professional presentations, or artistic compositions, our tool provides the flexibility and precision you need.",
+    features: [
+      {
+        title: "Multiple Layouts",
+        description: "Choose from horizontal, vertical, grid, or collage arrangements",
+        icon: <Grid className="h-6 w-6 text-blue-600" />
+      },
+      {
+        title: "Custom Spacing",
+        description: "Adjust spacing between images for perfect composition",
+        icon: <Settings className="h-6 w-6 text-green-600" />
+      },
+      {
+        title: "Background Control",
+        description: "Set custom background colors or transparency",
+        icon: <Palette className="h-6 w-6 text-purple-600" />
+      },
+      {
+        title: "Quality Settings",
+        description: "Control output quality from 10% to 100%",
+        icon: <Sparkles className="h-6 w-6 text-orange-600" />
+      }
+    ],
+    useCases: [
+      {
+        title: "Social Media Content",
+        description: "Create engaging posts for various platforms",
+        examples: [
+          "Instagram carousel posts",
+          "Facebook album covers",
+          "Twitter header images",
+          "LinkedIn professional posts"
+        ]
+      },
+      {
+        title: "Professional Presentations",
+        description: "Combine images for business and educational materials",
+        examples: [
+          "Before/after comparisons",
+          "Product catalogs",
+          "Training materials",
+          "Marketing collateral"
+        ]
+      },
+      {
+        title: "Creative Projects",
+        description: "Express your artistic vision through image composition",
+        examples: [
+          "Photo montages",
+          "Digital art pieces",
+          "Portfolio showcases",
+          "Personal projects"
+        ]
+      }
+    ],
+    tips: [
+      {
+        title: "Choose the Right Layout",
+        content: "Select horizontal layout for side-by-side comparisons, vertical for storytelling sequences, grid for organized presentations, and collage for artistic arrangements."
+      },
+      {
+        title: "Optimize Image Quality",
+        content: "Use higher quality settings (80-100%) for professional work and lower settings (60-80%) for web use to balance quality and file size."
+      },
+      {
+        title: "Consider Background Colors",
+        content: "Choose background colors that complement your images. White backgrounds work well for professional content, while colored backgrounds can add visual interest."
+      },
+      {
+        title: "Plan Your Composition",
+        content: "Think about the visual hierarchy and flow of your merged image. Arrange images in a way that guides the viewer's eye naturally through the composition."
+      }
+    ],
+    technicalDetails: [
+      {
+        title: "Supported Formats",
+        content: "Our tool supports PNG, JPG, JPEG, GIF, WebP, and BMP formats. All processing is done locally in your browser for maximum privacy and security."
+      },
+      {
+        title: "File Size Limits",
+        content: "You can merge up to 20 images at once, with each image up to 50MB. The maximum output size is 4000x4000 pixels, ensuring compatibility across all platforms."
+      },
+      {
+        title: "Processing Technology",
+        content: "We use advanced HTML5 Canvas technology for image processing, ensuring high-quality results while maintaining fast processing speeds and complete privacy."
+      },
+      {
+        title: "Browser Compatibility",
+        content: "Our tool works on all modern browsers including Chrome, Firefox, Safari, and Edge. No plugins or downloads required - everything runs in your browser."
+      }
+    ]
+  };
+
   return (
     <Layout>
       <SEO
@@ -122,43 +222,31 @@ const ImageMergerPage = () => {
             <ImageMerger />
           </div>
 
-          {/* Features Section */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-xl border border-white/20">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Multiple Layouts</h3>
-              <p className="text-muted-foreground text-sm">
-                Choose from horizontal, vertical, grid, or collage layouts to arrange your images perfectly.
-              </p>
-            </div>
+          {/* Enhanced Content Section */}
+          <div className="mb-16">
+            <ContentEnhancer {...contentData} />
+          </div>
 
-            <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-xl border border-white/20">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Secure & Private</h3>
-              <p className="text-muted-foreground text-sm">
-                All processing happens in your browser. Your images never leave your device, ensuring complete privacy.
-              </p>
-            </div>
+          {/* Comprehensive Guide Section */}
+          <div className="mb-16">
+            <ComprehensiveGuide toolName="Image Merger" toolCategory="Image Processing" />
+          </div>
 
-            <div className="text-center p-6 bg-white/50 backdrop-blur-sm rounded-xl border border-white/20">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Customizable Settings</h3>
-              <p className="text-muted-foreground text-sm">
-                Adjust spacing, background color, quality, and grid settings to create the perfect merged image.
-              </p>
-            </div>
+          {/* Smart Ad Section - Only shows when there's sufficient content */}
+          <div className="mb-16">
+            <SmartAd 
+              adSlot="image-merger-content-ad"
+              adFormat="rectangle"
+              className="max-w-4xl mx-auto"
+              fallbackContent={
+                <div className="text-center p-8 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 rounded-2xl">
+                  <h3 className="text-xl font-semibold mb-2">Learn More About Image Merging</h3>
+                  <p className="text-muted-foreground">
+                    Discover advanced techniques and tips for creating stunning image compositions.
+                  </p>
+                </div>
+              }
+            />
           </div>
 
           {/* How It Works */}
